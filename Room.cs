@@ -11,15 +11,16 @@ namespace StarterGame
     {
         private Dictionary<string, Room> _exits;
         private string _tag;
+        private string _name;
         public string Tag { get { return _tag; } set { _tag = value; } }
-
-        public Room() : this("No Tag"){}
-
+        public string Name { get { return _name; } set { _name = value; } }
+        
         // Designated Constructor
-        public Room(string tag)
+        public Room(string tag = "No Tag", string name = "No Name")
         {
             _exits = new Dictionary<string, Room>();
-            this.Tag = tag;
+            Tag = tag;
+            Name = name;
         }
 
         public void SetExit(string exitName, Room room)
@@ -36,19 +37,19 @@ namespace StarterGame
 
         private string GetExits()
         {
-            string exitNames = "Routes: ";
+            string exitNames = "------Available Paths------";
             Dictionary<string, Room>.KeyCollection keys = _exits.Keys;
             // Show the exit names and the room tags
             foreach (string exitName in keys)
             {
-                exitNames += " " + exitName + " " + _exits[exitName].Tag;
+                exitNames += "\n" + exitName + " --> " + _exits[exitName].Name;
             }
             return exitNames;
         }
 
         public string Description()
         {
-            return "You are " + Tag + ".\n *** " + GetExits();
+            return "You are " + Tag + ".\n" + GetExits();
         }
     }
 }

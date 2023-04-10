@@ -23,13 +23,13 @@ namespace StarterGame
 
         private static Room CreateWorld()
         {
-            Room mousetopia = new Room("in the comfort of Mousetopia");
-            Room sewerEntrance = new Room("at the entrance of the sewer");
-            Room sewer = new Room("in the sewer, connecting Mousetopia to the Giant's territory");
-            Room pipeHub = new Room("in the pipe hub, where multiple pipes lead to different Giant's houses");
-            Room house1 = new Room("in the first Giant's house, searching for cheese");
-            Room house2 = new Room("in the second Giant's house, searching for cheese");
-            Room house3 = new Room("in the third Giant's house, searching for cheese");
+            Room mousetopia = new Room("in the comfort of Mousetopia", "Mousetopia");
+            Room sewerEntrance = new Room("at the entrance of the sewer", "Sewer Entrance");
+            Room sewer = new Room("in the sewer, connecting Mousetopia to the Giant's territory", "Sewer");
+            Room pipeHub = new Room("in the pipe hub, where multiple pipes lead to different Giant's houses", "Pipe Hub");
+            Room orangeHouse = new Room("in a orange bathroom", "Pipe 1");
+            Room greenHouse = new Room("in a green bathroom", "Pipe 2");
+            Room redHouse = new Room("in a red bathroom", "Pipe 3");
             
             mousetopia.SetExit("south", sewerEntrance);
             
@@ -40,9 +40,9 @@ namespace StarterGame
             sewer.SetExit("south", pipeHub);
             
             pipeHub.SetExit("north", sewer);
-            pipeHub.SetExit("east", house1);
-            pipeHub.SetExit("west", house2);
-            pipeHub.SetExit("south", house3);
+            pipeHub.SetExit("east", orangeHouse);
+            pipeHub.SetExit("west", greenHouse);
+            pipeHub.SetExit("south", redHouse);
             
             return mousetopia;
         }
@@ -87,7 +87,7 @@ namespace StarterGame
 
         private string Welcome()
         {
-            return "Welcome to Cheese Tax!\n\nEmbark on a journey into Giant territory in search of the precious cheese. Can you escape your enemies and secure your family's future?\n\nType 'help' if you need help." + _player.CurrentRoom.Description();
+            return "Welcome to Cheese Tax!\n\nEmbark on a journey into Giant territory in search of the precious cheese. Can you escape your enemies and secure your family's future?\n\nType 'help' if you need help. " + _player.CurrentRoom.Description();
         }
 
         private string Goodbye()
