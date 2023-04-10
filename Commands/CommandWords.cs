@@ -7,10 +7,10 @@ namespace StarterGame.Commands
      */
     public class CommandWords
     {
-        private Dictionary<string, Command> _commands;
-        private static Command[] _commandArray = { new GoCommand(), new QuitCommand() };
+        private readonly Dictionary<string, Command> _commands;
+        private static readonly Command[] CommandArray = { new GoCommand(), new QuitCommand(), new WhereAmICommand() };
 
-        public CommandWords() : this(_commandArray) {}
+        public CommandWords() : this(CommandArray) {}
 
         // Designated Constructor
         public CommandWords(Command[] commandList)
