@@ -10,7 +10,7 @@
         public HelpCommand() : this(new CommandWords()){}
 
         // Designated Constructor
-        public HelpCommand(CommandWords commands) : base()
+        public HelpCommand(CommandWords commands)
         {
             _words = commands;
             Name = "help";

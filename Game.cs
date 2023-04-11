@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using StarterGame.Achievements;
 using StarterGame.Commands;
 
 namespace StarterGame
@@ -13,12 +14,20 @@ namespace StarterGame
         private Player _player;
         private readonly Parser _parser;
         private bool _playing;
+        private readonly AchievementManager _achievementManager;
 
         public Game()
         {
             _playing = false;
             _parser = new Parser(new CommandWords());
+            _achievementManager = AchievementManager.Instance;
+            InitializeAchievements(); 
             _player = new Player(CreateWorld());
+        }
+        
+        private void InitializeAchievements()
+        {
+            _achievementManager.RegisterObserver(new HomesickAchievement());
         }
 
         private static Room CreateWorld()

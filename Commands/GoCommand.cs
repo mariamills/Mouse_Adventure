@@ -16,7 +16,7 @@
         {
             if (this.HasSecondWord())
             {
-                player.WaltTo(this.SecondWord);
+                player.WalkTo(this.SecondWord);
             }
             else
             {

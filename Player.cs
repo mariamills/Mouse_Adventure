@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using StarterGame.Achievements;
 
 namespace StarterGame
 {
@@ -17,12 +18,14 @@ namespace StarterGame
             _currentRoom = room;
         }
 
-        public void WaltTo(string direction)
+        public void WalkTo(string direction)
         {
+            AchievementManager achievementManager = AchievementManager.Instance;
             Room nextRoom = this.CurrentRoom.GetExit(direction);
             if (nextRoom != null)
             {
                 CurrentRoom = nextRoom;
+                achievementManager.Notify("RoomChange", this);
                 NormalMessage("\n" + this.CurrentRoom.Description());
             }
             else
@@ -47,6 +50,11 @@ namespace StarterGame
         public void NormalMessage(string message)
         {
             ColoredMessage(message, ConsoleColor.White);
+        }
+        
+        public void AchieveMessage(string message)
+        {
+            ColoredMessage(message, ConsoleColor.Green);
         }
 
         public void InfoMessage(string message)
