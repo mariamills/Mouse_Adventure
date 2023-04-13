@@ -2,20 +2,17 @@
 {
     public class HomesickAchievement : Achievement
     {
-        private bool _isAchieved;
-        
         public HomesickAchievement() : base("Homesick", "Leave your home for the first time")
         {
-            _isAchieved = false;
+            Unlocked = false;
         }
         public override void Update(string eventType, object data)
         {
-            if (eventType == "RoomChange" && !_isAchieved)
+            if (eventType == "RoomChange" && !Unlocked)
             {
                 var player = (Player) data;
                 if (player.CurrentRoom.Name != "Mousetopia")
                 {
-                    _isAchieved = true;
                     Achieve(player);
                 }
             }

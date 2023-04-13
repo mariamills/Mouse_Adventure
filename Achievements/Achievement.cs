@@ -6,7 +6,7 @@ namespace StarterGame.Achievements
     {
         private string Name { get; }
         private string Description { get; }
-        private bool Unlocked { get; set; }
+        protected bool Unlocked { get; set; }
 
         protected Achievement(string name = "No Name", string description = "No Description")
         {

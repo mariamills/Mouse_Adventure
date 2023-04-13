@@ -2,7 +2,7 @@
 
 namespace StarterGame.Achievements
 {
-    public class AchievementManager : ISubject
+    public class AchievementManager
     {
         private readonly List<Achievement> _achievements;
         private static AchievementManager _instance;
