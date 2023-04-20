@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using StarterGame.Achievements;
+using StarterGame.Commands;
 
 namespace StarterGame
 {
@@ -10,28 +11,69 @@ namespace StarterGame
      */
     public class Player
     {
-        private Room _currentRoom = null;
-        public Room CurrentRoom { get { return _currentRoom; } set { _currentRoom = value; } }
+        public Room CurrentRoom { get; set; }
+
+        public int Currency { get; set; }
+        public int Lives { get; private set; }
+        public int Deaths { get; private set; }
+        
+        private readonly History _playerHistory = new History();
+        private readonly AchievementManager _achievementManager = AchievementManager.Instance;
 
         public Player(Room room)
         {
-            _currentRoom = room;
+            CurrentRoom = room;
+            Lives = 3;
+            Currency = 0;
+            Deaths = 0;
+            _playerHistory.SaveState(CreateState());
         }
 
         public void WalkTo(string direction)
         {
-            AchievementManager achievementManager = AchievementManager.Instance;
-            Room nextRoom = this.CurrentRoom.GetExit(direction);
+            Room nextRoom = CurrentRoom.GetExit(direction);
             if (nextRoom != null)
             {
                 CurrentRoom = nextRoom;
-                achievementManager.Notify("RoomChange", this);
+                _achievementManager.Notify("RoomChange", this);
                 NormalMessage("\n" + this.CurrentRoom.Description());
             }
             else
             {
                 ErrorMessage("\nThere is no door on " + direction);
             }
+        }
+        
+        public void Die()
+        {
+            Lives--;
+            Deaths++;
+            _achievementManager.Notify("PlayerDeath", this);
+            if (Lives > 0)
+            { 
+                LoadCheckpoint(_playerHistory.RestoreState());
+                ErrorMessage("\nYou have died. You have " + Lives + " lives left.");
+                InfoMessage("You've returned to your last checkpoint: " + CurrentRoom.Description());
+            }
+            else
+            {
+                ErrorMessage("\nYou have died. You have no lives left. Game Over.");
+                // TODO: Game Over
+            }
+        }
+
+        // Produce snapshot of player state
+        public PlayerState CreateState()
+        {
+            return new PlayerState(CurrentRoom, Currency, Lives, Deaths);
+        }
+        
+        // Load last checkpoint
+        // Restore player state
+        public void LoadCheckpoint(PlayerState state)
+        {
+            CurrentRoom = state.CurrentRoom;
+            Currency = state.Currency;
         }
 
         public void OutputMessage(string message)

@@ -6,7 +6,6 @@
 
         private GameWorld()
         {
-            
         }
         
         public static GameWorld Instance
@@ -47,6 +46,6 @@
             
             return mousetopia;
         }
-        
+
     }
 }

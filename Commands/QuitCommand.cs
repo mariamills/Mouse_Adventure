@@ -8,14 +8,14 @@
 
         public QuitCommand() : base()
         {
-            this.Name = "quit";
+            Name = "quit";
         }
 
         override
         public bool Execute(Player player)
         {
             bool answer = true;
-            if (this.HasSecondWord())
+            if (HasSecondWord())
             {
                 player.WarningMessage("\nI cannot quit " + this.SecondWord);
                 answer = false;

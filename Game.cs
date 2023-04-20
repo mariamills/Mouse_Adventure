@@ -11,7 +11,7 @@ namespace StarterGame
      */
     public class Game
     {
-        private Player _player;
+        private readonly Player _player;
         private readonly Parser _parser;
         private bool _playing;
         private readonly AchievementManager _achievementManager;
@@ -21,13 +21,14 @@ namespace StarterGame
             _playing = false;
             _parser = new Parser(new CommandWords());
             _achievementManager = AchievementManager.Instance;
-            InitializeAchievements(); 
             _player = new Player(GameWorld.Instance.CreateWorld());
+            InitializeAchievements(); // register achievements
         }
         
         private void InitializeAchievements()
         {
             _achievementManager.RegisterObserver(new HomesickAchievement());
+            _achievementManager.RegisterObserver(new NotBeginnersLuckAchievement());
         }
 
 
@@ -71,7 +72,7 @@ namespace StarterGame
 
         private string Welcome()
         {
-            return "Welcome to Cheese Tax!\n\nEmbark on a journey into Giant territory in search of the precious cheese. Can you escape your enemies and secure your family's future?\n\nType 'help' if you need help. " + _player.CurrentRoom.Description();
+            return "Welcome to Cheese Tax!\n\nEmbark on a journey into Giant territory in search of the precious cheese. Can you escape your enemies and secure your family's future?\n\nType 'help' if you need help.\n" + _player.CurrentRoom.Description();
         }
 
         private string Goodbye()

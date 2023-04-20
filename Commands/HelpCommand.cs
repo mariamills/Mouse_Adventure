@@ -27,13 +27,16 @@
             {
                 // These commands/tips are subject to change
                 // This is what my current ideas/plans are
+                // Verbatim string literal
                 player.InfoMessage(@"You are a little mouse that is taking on a big journey.
 
 Your available commands are:
   - help: Display this help message.
   - go [direction]: Move in the specified direction (north, south, east, west).
   - whereami: Display the name of the current room.
+  - die: Lose a life and return to the last checkpoint.
   - look: Examine your surroundings and find objects or enemies in the room.
+  - cheese: Display the amount of cheese you currently have.
   - take [item]: Pick up an item and add it to your inventory.
   - use [item]: Use an item from your inventory.
   - inventory: Display the items currently in your inventory.

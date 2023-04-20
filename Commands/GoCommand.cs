@@ -8,7 +8,7 @@
 
         public GoCommand() : base()
         {
-            this.Name = "go";
+            Name = "go";
         }
 
         override
@@ -16,7 +16,7 @@
         {
             if (this.HasSecondWord())
             {
-                player.WalkTo(this.SecondWord);
+                player.WalkTo(SecondWord);
             }
             else
             {

@@ -9,7 +9,7 @@ namespace StarterGame
      */
     public class Room
     {
-        private Dictionary<string, Room> _exits;
+        private readonly Dictionary<string, Room> _exits;
         private string _tag;
         private string _name;
         public string Tag { get { return _tag; } set { _tag = value; } }
