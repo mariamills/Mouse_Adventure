@@ -5,9 +5,10 @@ namespace StarterGame
     public class History
     {
         private readonly Stack<PlayerState> _playerStates = new Stack<PlayerState>();
-        
+        public int Count => _playerStates.Count;
+
         // Check if there is a previous state to restore
-        public bool HasState()
+        public bool HasPreviousState()
         {
             return _playerStates.Count > 0;
         }

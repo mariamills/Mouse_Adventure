@@ -15,9 +15,8 @@ namespace StarterGame
 
         public int Currency { get; set; }
         public int Lives { get; private set; }
-        public int Deaths { get; private set; }
-        
-        private readonly History _playerHistory = new History();
+
+        private readonly History _playerHistory;
         private readonly AchievementManager _achievementManager = AchievementManager.Instance;
 
         public Player(Room room)
@@ -25,7 +24,7 @@ namespace StarterGame
             CurrentRoom = room;
             Lives = 3;
             Currency = 0;
-            Deaths = 0;
+            _playerHistory = new History();
             _playerHistory.SaveState(CreateState());
         }
 
@@ -47,10 +46,14 @@ namespace StarterGame
         public void Die()
         {
             Lives--;
-            Deaths++;
             _achievementManager.Notify("PlayerDeath", this);
             if (Lives > 0)
-            { 
+            {
+                // If player has no checkpoints, create one
+                if (_playerHistory.Count == 1)
+                {
+                    _playerHistory.SaveState(CreateState());
+                }
                 LoadCheckpoint(_playerHistory.RestoreState());
                 ErrorMessage("\nYou have died. You have " + Lives + " lives left.");
                 InfoMessage("You've returned to your last checkpoint: " + CurrentRoom.Description());
@@ -65,7 +68,7 @@ namespace StarterGame
         // Produce snapshot of player state
         public PlayerState CreateState()
         {
-            return new PlayerState(CurrentRoom, Currency, Lives, Deaths);
+            return new PlayerState(CurrentRoom, Currency);
         }
         
         // Load last checkpoint

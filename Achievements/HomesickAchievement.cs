@@ -8,13 +8,14 @@
         }
         public override void Update(string eventType, object data)
         {
+            var player = (Player) data;
             if (eventType == "RoomChange" && !Unlocked)
             {
-                var player = (Player) data;
-                if (player.CurrentRoom.Name != "Mousetopia")
-                {
+                if (player.CurrentRoom.Tag.Contains("bathroom"))
+                { 
                     Achieve(player);
-                }
+                    Unlocked = true;
+                } 
             }
         }
     }
