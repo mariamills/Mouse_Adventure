@@ -36,6 +36,7 @@ namespace StarterGame
                 CurrentRoom = nextRoom;
                 _achievementManager.Notify("RoomChange", this);
                 NormalMessage("\n" + CurrentRoom.Details());
+                ScanRoom();
             }
             else
             {
@@ -43,20 +44,31 @@ namespace StarterGame
             }
         }
 
+        private void ScanRoom()
+        {
+            if (CurrentRoom.Interactables.Count > 0)
+            {
+                NormalMessage("\nYou see:");
+                foreach (KeyValuePair<string, Interactable> interactable in CurrentRoom.Interactables)
+                {
+                    ColoredMessage(interactable.Key, ConsoleColor.DarkYellow);
+                }
+            }
+        }
+
         public void Look(string obj)
         {
             if (CurrentRoom.Interactables.ContainsKey(obj))
             {
-                if(CurrentRoom.Interactables[obj] > 0)
+                Interactable interactable = CurrentRoom.Interactables[obj];
+                InfoMessage("\n" + interactable.Description);
+                if (interactable.CheeseAmount > 0)
                 {
-                    InfoMessage("You found " + CurrentRoom.Interactables[obj] + " cheese!");
-                    Currency += CurrentRoom.Interactables[obj];
-                    CurrentRoom.Interactables[obj] = 0;
+                    AchieveMessage("You found " + interactable.CheeseAmount + " cheese!");
+                    Currency += interactable.CheeseAmount;
+                    _achievementManager.Notify("CheeseFound", this);
                 }
-                else
-                {
-                    InfoMessage("You found nothing.");
-                }
+                CurrentRoom.Interactables.Remove(obj); 
             }
             else
             {
@@ -130,7 +142,7 @@ namespace StarterGame
 
         public void WarningMessage(string message)
         {
-            ColoredMessage(message, ConsoleColor.DarkYellow);
+            ColoredMessage(message, ConsoleColor.Yellow);
         }
 
         public void ErrorMessage(string message)
