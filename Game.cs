@@ -72,7 +72,8 @@ namespace StarterGame
 
         private string Welcome()
         {
-            return "Welcome to Cheese Tax!\n\nEmbark on a journey into Giant territory in search of the precious cheese. Can you escape your enemies and secure your family's future?\n\nType 'help' if you need help.\n" + _player.CurrentRoom.Description();
+            return
+                "Welcome to Cheese Tax!\n\nEmbark on a journey into Giant territory in search of the precious cheese. Can you escape your enemies and secure your family's future?\n\nType 'help' if you need help.\n" + _player.CurrentRoom.Details();
         }
 
         private string Goodbye()

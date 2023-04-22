@@ -9,7 +9,7 @@
 
         public override bool Execute(Player player)
         {
-            player.OutputMessage("\n" + player.CurrentRoom.Description());
+            player.OutputMessage("\n" + player.CurrentRoom.Details());
             return false;
         }
     }

@@ -35,14 +35,35 @@ namespace StarterGame
             {
                 CurrentRoom = nextRoom;
                 _achievementManager.Notify("RoomChange", this);
-                NormalMessage("\n" + this.CurrentRoom.Description());
+                NormalMessage("\n" + CurrentRoom.Details());
             }
             else
             {
                 ErrorMessage("\nThere is no door on " + direction);
             }
         }
-        
+
+        public void Look(string obj)
+        {
+            if (CurrentRoom.Interactables.ContainsKey(obj))
+            {
+                if(CurrentRoom.Interactables[obj] > 0)
+                {
+                    InfoMessage("You found " + CurrentRoom.Interactables[obj] + " cheese!");
+                    Currency += CurrentRoom.Interactables[obj];
+                    CurrentRoom.Interactables[obj] = 0;
+                }
+                else
+                {
+                    InfoMessage("You found nothing.");
+                }
+            }
+            else
+            {
+                InfoMessage("I don't see that.");
+            }
+        }
+
         public void Die()
         {
             Lives--;
@@ -56,7 +77,7 @@ namespace StarterGame
                 }
                 LoadCheckpoint(_playerHistory.RestoreState());
                 ErrorMessage("\nYou have died. You have " + Lives + " lives left.");
-                InfoMessage("You've returned to your last checkpoint: " + CurrentRoom.Description());
+                InfoMessage("You've returned to your last checkpoint: " + CurrentRoom.Details());
             }
             else
             {

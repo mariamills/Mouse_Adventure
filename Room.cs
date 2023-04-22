@@ -14,13 +14,18 @@ namespace StarterGame
         private string _name;
         public string Tag { get { return _tag; } set { _tag = value; } }
         public string Name { get { return _name; } set { _name = value; } }
+        public string Description { get; }
         
+        public Dictionary<string, int> Interactables { get; }
+
         // Designated Constructor
-        public Room(string tag = "No Tag", string name = "No Name")
+        public Room(string tag = "No Tag", string name = "No Name", string description = "Nothing to see here.")
         {
             _exits = new Dictionary<string, Room>();
             Tag = tag;
             Name = name;
+            Description = description;
+            Interactables = new Dictionary<string, int>();
         }
 
         public void SetExit(string exitName, Room room)
@@ -47,9 +52,9 @@ namespace StarterGame
             return exitNames;
         }
 
-        public string Description()
+        public string Details()
         {
-            return "You are " + Tag + ".\n" + GetExits();
+            return "You are " + Tag + ".\n" + Description + "\n" + GetExits();
         }
     }
 }
