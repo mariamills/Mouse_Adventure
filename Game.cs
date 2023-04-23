@@ -62,6 +62,7 @@ namespace StarterGame
         {
             _playing = true;
             _player.InfoMessage(Welcome());
+            _player.ScanRoom();
         }
 
         public void End()

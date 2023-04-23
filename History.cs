@@ -24,5 +24,10 @@ namespace StarterGame
         {
             return _playerStates.Pop();
         }
+        
+        public PlayerState PeekState()
+        {
+            return _playerStates.Peek();
+        }
     }
 }

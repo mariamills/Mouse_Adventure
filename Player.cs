@@ -37,22 +37,30 @@ namespace StarterGame
                 _achievementManager.Notify("RoomChange", this);
                 NormalMessage("\n" + CurrentRoom.Details());
                 ScanRoom();
+                if (CurrentRoom.IsCheckPoint)
+                {
+                    _playerHistory.SaveState(CreateState());
+                }
             }
             else
             {
-                ErrorMessage("\nThere is no door on " + direction);
+                ErrorMessage("\nThere is no path in the " + direction);
             }
         }
 
-        private void ScanRoom()
+        public void ScanRoom()
         {
+            NormalMessage("\nYou see:");
             if (CurrentRoom.Interactables.Count > 0)
             {
-                NormalMessage("\nYou see:");
                 foreach (KeyValuePair<string, Interactable> interactable in CurrentRoom.Interactables)
                 {
                     ColoredMessage(interactable.Key, ConsoleColor.DarkYellow);
                 }
+            }
+            else
+            {
+                InfoMessage("Nothing of interest.");
             }
         }
 
@@ -61,14 +69,15 @@ namespace StarterGame
             if (CurrentRoom.Interactables.ContainsKey(obj))
             {
                 Interactable interactable = CurrentRoom.Interactables[obj];
-                InfoMessage("\n" + interactable.Description);
+                NormalMessage(interactable.Description);
                 if (interactable.CheeseAmount > 0)
                 {
                     AchieveMessage("You found " + interactable.CheeseAmount + " cheese!");
                     Currency += interactable.CheeseAmount;
                     _achievementManager.Notify("CheeseFound", this);
                 }
-                CurrentRoom.Interactables.Remove(obj); 
+                CurrentRoom.Interactables.Remove(obj);
+                ScanRoom();
             }
             else
             {
@@ -85,11 +94,12 @@ namespace StarterGame
                 // If player has no checkpoints, create one
                 if (_playerHistory.Count == 1)
                 {
-                    _playerHistory.SaveState(CreateState());
+                    var lastState = _playerHistory.PeekState();
+                    _playerHistory.SaveState(lastState);
                 }
                 LoadCheckpoint(_playerHistory.RestoreState());
                 ErrorMessage("\nYou have died. You have " + Lives + " lives left.");
-                InfoMessage("You've returned to your last checkpoint: " + CurrentRoom.Details());
+                InfoMessage("You've returned to your last checkpoint: " + CurrentRoom.Name);
             }
             else
             {

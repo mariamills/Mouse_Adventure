@@ -38,20 +38,15 @@ Your available commands are:
   - look: Examine your surroundings and find objects or enemies in the room.
   - cheese: Display the amount of cheese you currently have.
   - take [item]: Pick up an item and add it to your inventory.
-  - use [item]: Use an item from your inventory.
-  - inventory: Display the items currently in your inventory.
   - bite: Attempt to bite the encountered enemy.
   - give [item]: Give an item from your inventory to an encountered enemy.
   - flee: Attempt to escape from a dangerous situation.
-  - save: Save your current game progress.
-  - load: Load your saved game.
   - quit: Exit the game.
 
 Tips:
-- Explore different rooms to find cheese, items, and complete quests.
-- Interact with fellow mice and enemies to learn more about the game world.
-- Choose your actions wisely when encountering enemies; some options may have a higher chance of success than others.
-- Remember to save your progress regularly, especially after reaching checkpoints or completing important tasks.");
+- Explore different rooms to find cheese and try to avoid enemies.
+- Interact with objects in the room looking for cheese.
+- Choose your actions wisely when encountering enemies.");
             }
             return false;
         }
