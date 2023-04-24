@@ -6,8 +6,4 @@
     <RootNamespace>StarterGame</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Enemies\" />
-  </ItemGroup>
-
 </Project>
