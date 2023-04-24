@@ -22,6 +22,6 @@
             return this.SecondWord != null;
         }
 
-        public abstract bool Execute(Player player);
+        public abstract bool Execute(Player.Player player);
     }
 }

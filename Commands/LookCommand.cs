@@ -6,7 +6,7 @@
         {
             Name = "look";
         }
-        public override bool Execute(Player player)
+        public override bool Execute(Player.Player player)
         {
             if (HasSecondWord())
             {

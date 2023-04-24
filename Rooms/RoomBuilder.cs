@@ -1,4 +1,6 @@
-﻿namespace StarterGame
+﻿using StarterGame.Interactables;
+
+namespace StarterGame.Rooms
 {
     public class RoomBuilder
     {

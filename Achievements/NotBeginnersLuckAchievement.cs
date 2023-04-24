@@ -10,7 +10,7 @@
         {
             if(eventType == "PlayerDeath" && !Unlocked)
             {
-                var player = (Player) data;
+                var player = (Player.Player) data;
                 if (player.Lives == 2)
                 {
                     Achieve(player);

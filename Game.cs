@@ -11,7 +11,7 @@ namespace StarterGame
      */
     public class Game
     {
-        private readonly Player _player;
+        private readonly Player.Player _player;
         private readonly Parser _parser;
         private bool _playing;
         private readonly AchievementManager _achievementManager;
@@ -21,7 +21,7 @@ namespace StarterGame
             _playing = false;
             _parser = new Parser(new CommandWords());
             _achievementManager = AchievementManager.Instance;
-            _player = new Player(GameWorld.Instance.CreateWorld());
+            _player = new Player.Player(GameWorld.Instance.CreateWorld());
             InitializeAchievements(); // register achievements
         }
         

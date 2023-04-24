@@ -7,7 +7,7 @@
             Name = "whereami";
         }
 
-        public override bool Execute(Player player)
+        public override bool Execute(Player.Player player)
         {
             player.OutputMessage("\n" + player.CurrentRoom.Details());
             return false;

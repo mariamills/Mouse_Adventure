@@ -1,10 +1,10 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System;
 using StarterGame.Achievements;
-using StarterGame.Commands;
+using StarterGame.Interactables;
+using StarterGame.Rooms;
 
-namespace StarterGame
+namespace StarterGame.Player
 {
     /*
      * Spring 2023
@@ -16,7 +16,7 @@ namespace StarterGame
         public int Currency { get; private set; }
         public int Lives { get; private set; }
 
-        private readonly History _playerHistory;
+        private readonly PlayerHistory _playerPlayerHistory;
         private readonly AchievementManager _achievementManager = AchievementManager.Instance;
 
         public Player(Room room)
@@ -24,8 +24,8 @@ namespace StarterGame
             CurrentRoom = room;
             Lives = 3;
             Currency = 0;
-            _playerHistory = new History();
-            _playerHistory.SaveState(CreateState());
+            _playerPlayerHistory = new PlayerHistory();
+            _playerPlayerHistory.SaveState(CreateState());
         }
 
         public void WalkTo(string direction)
@@ -39,19 +39,24 @@ namespace StarterGame
                 ScanRoom();
                 if (CurrentRoom.IsCheckPoint)
                 {
-                    _playerHistory.SaveState(CreateState());
+                    _playerPlayerHistory.SaveState(CreateState());
                 }
             }
             else if (direction.Contains("sink"))
             {
-                Teleporter teleporter = CurrentRoom.Interactables[direction] as Teleporter;
-                if (teleporter != null) teleporter.Interact(this);
-                _achievementManager.Notify("Teleport", this);
+                UseTeleporter(direction);
             }
             else
             {
                 ErrorMessage("\nThere is no path in the " + direction);
             }
+        }
+
+        private void UseTeleporter(string direction)
+        {
+            Teleporter teleporter = CurrentRoom.Interactables[direction] as Teleporter;
+            if (teleporter != null) teleporter.Interact(this);
+            _achievementManager.Notify("Teleport", this);
         }
 
         public void ScanRoom()
@@ -97,12 +102,12 @@ namespace StarterGame
         {
             Lives--;
             _achievementManager.Notify("PlayerDeath", this);
-            PlayerState playerState = _playerHistory.RestoreState();
+            PlayerState playerState = _playerPlayerHistory.RestoreState();
             if (Lives > 0)
             {
-                if (_playerHistory.Count == 1)
+                if (_playerPlayerHistory.Count == 1)
                 {
-                    playerState = _playerHistory.PeekState();
+                    playerState = _playerPlayerHistory.PeekState();
                 }
                 LoadCheckpoint(playerState);
                 ErrorMessage("\nYou have died. You have " + Lives + " lives left.");

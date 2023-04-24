@@ -8,7 +8,7 @@
         }
         public override void Update(string eventType, object data)
         {
-            var player = (Player) data;
+            var player = (Player.Player) data;
             if (eventType == "RoomChange" && !Unlocked)
             {
                 if (player.CurrentRoom.Tag.Contains("bathroom"))

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using StarterGame.Rooms;
 
-namespace StarterGame
+namespace StarterGame.Interactables
 {
     public class Teleporter : Interactable
     {
@@ -13,7 +14,7 @@ namespace StarterGame
             _random = new Random();
         }
         
-        public void Interact(Player player)
+        public void Interact(Player.Player player)
         {
             Room nextRoom = _possibleDestinations[_random.Next(0, _possibleDestinations.Count)];
             player.CurrentRoom = nextRoom;

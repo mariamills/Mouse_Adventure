@@ -15,7 +15,7 @@ namespace StarterGame.Achievements
             Unlocked = false;
         }
         
-        protected void Achieve(Player player)
+        protected void Achieve(Player.Player player)
         {
             if (!Unlocked)
             {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace StarterGame
+namespace StarterGame.Player
 {
-    public class History
+    public class PlayerHistory
     {
         private readonly Stack<PlayerState> _playerStates = new Stack<PlayerState>();
         public int Count => _playerStates.Count;

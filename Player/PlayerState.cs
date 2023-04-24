@@ -1,4 +1,6 @@
-﻿namespace StarterGame
+﻿using StarterGame.Rooms;
+
+namespace StarterGame.Player
 {
     public class PlayerState
     {

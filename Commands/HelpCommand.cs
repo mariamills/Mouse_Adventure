@@ -17,7 +17,7 @@
         }
 
         override
-        public bool Execute(Player player)
+        public bool Execute(Player.Player player)
         {
             if (this.HasSecondWord())
             {

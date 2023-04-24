@@ -7,7 +7,7 @@
             Name = "die";
         }
 
-        public override bool Execute(Player player)
+        public override bool Execute(Player.Player player)
         {
             player.Die();
             return false;
