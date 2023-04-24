@@ -35,7 +35,7 @@ Your available commands are:
   - go [direction]: Move in the specified direction (north, south, east, west).
   - whereami: Display the name of the current room.
   - die: Lose a life and return to the last checkpoint.
-  - look: Examine your surroundings and find objects.
+  - look: Search an object in the room for cheese.
   - cheese: Display the amount of cheese you currently have.
   - give [item]: Give an item from your inventory to an encountered enemy.
   - bite: Attempt to bite the encountered enemy.
@@ -45,7 +45,8 @@ Your available commands are:
 Tips:
 - Explore different rooms to find cheese and try to avoid enemies.
 - Interact with objects in the room looking for cheese.
-- Choose your actions wisely when encountering enemies.");
+- Choose your actions wisely when encountering enemies.
+- Find 10 cheese to win the game... or maybe there's another way to win?");
             }
             return false;
         }

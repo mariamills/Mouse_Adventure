@@ -74,7 +74,7 @@ namespace StarterGame
         private string Welcome()
         {
             return
-                "Welcome to Cheese Tax!\n\nEmbark on a journey into Giant territory in search of the precious cheese. Can you escape your enemies and secure your family's future?\n\nType 'help' if you need help.\n" + _player.CurrentRoom.Details();
+                "Welcome to Cheese Tax!\n\nThe Mouse Mafia has imposed a harsh and unfair Cheese Tax on Mousetopia, leaving you owing them 10 cheese. Embark on a journey into Giant territory to find cheese and secure your future.\n\nBut maybe there might be another way to free Mousetopia from the Mouse Mafia's grip...\n\nType 'help' if you need help.\n" + _player.CurrentRoom.Details();
         }
 
         private string Goodbye()
