@@ -1,4 +1,7 @@
-﻿namespace StarterGame
+﻿using System;
+using System.Collections.Generic;
+
+namespace StarterGame
 {
     public class GameWorld
     {
@@ -104,11 +107,20 @@
             pipe4.SetExit("west", redKitchen);
             redKitchen.SetExit("north", redLivingRoom);
             redLivingRoom.SetExit("south", redKitchen);
+            
+            // Set up teleporters
+            Teleporter orangeKitchenSink = new Teleporter("orange-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?", new List<Room>() {redKitchen, blueKitchen});
+            orangeKitchen.Interactables.Add(orangeKitchenSink.Name, orangeKitchenSink);
+            
+            Teleporter blueKitchenSink = new Teleporter("blue-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?", new List<Room>() {redKitchen, orangeKitchen});
+            blueKitchen.Interactables.Add(blueKitchenSink.Name, blueKitchenSink);
 
+            Teleporter redKitchenSink = new Teleporter("red-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?", new List<Room>() {orangeKitchen, redKitchen});
+            redKitchen.Interactables.Add(redKitchenSink.Name, redKitchenSink);
 
-            return mousetopia;
+            return mousetopia;  
         }
-        
+
         private Room CreateMafiaHideout()
         {
             Room mafiaHideout = new RoomBuilder()
@@ -127,6 +139,9 @@
                 .SetName("Back Alley")
                 .SetTag("in the Back Alley. There are a few dumpsters and abandoned buildings on the sides.")
                 .Build();
+
+            Interactable dumpster = Interactable.CreateCheeseInteractable("dumpster", "You approach the dumpster. It smells wonderful.", 50);
+            backAlley.Interactables.Add("dumpster", dumpster);
             return backAlley;
         }
 
@@ -146,7 +161,9 @@
                 .SetTag("in the Cheese Square. The heart of Mousetopia. There is a fountain in the middle of the square. Mice are interacting with each other and there are a few shops on the sides.")
                 .Build();
             
-            Interactable fountain = new Interactable("fountain", "You approach the fountain. The fountain is made of stone and is shaped like a mouse. Mice are drinking from the fountain.");
+            Interactable group = new Interactable("group", "You approach a group of mice. You hear them talking about how someone could put a stop to the Mouse Mafia...");
+            cheeseSquare.Interactables.Add(group.Name, group);
+            Interactable fountain = Interactable.CreateCheeseInteractable("fountain", "You approach the fountain. The fountain is made of stone and is shaped like a mouse. Mice are drinking from the fountain.", 15);
             cheeseSquare.Interactables.Add(fountain.Name, fountain);
             return cheeseSquare;
         }
@@ -211,6 +228,9 @@
                 .SetName("Blue Kitchen")
                 .SetTag("in a Blue Kitchen.")
                 .Build();
+            
+            Interactable fridge = Interactable.CreateCheeseInteractable("fridge", "You approach the fridge. What's that smell..?", 100);
+            blueKitchen.Interactables.Add(fridge.Name, fridge);
             return blueKitchen;
         }
         
@@ -238,6 +258,12 @@
                 .SetName("Messy Bedroom")
                 .SetTag("in a Messy Bedroom.")
                 .Build();
+            
+            Interactable bed = Interactable.CreateCheeseInteractable("bed", "You approach the bed. It looks like someone has been sleeping up there. You search under the bed.", 50);
+            messyBedroom.Interactables.Add(bed.Name, bed);
+            
+            Interactable clothes = Interactable.CreateCheeseInteractable("clothes", "You approach the pile of clothes. It has a familiar smell. You search through the pile.", 75);
+            messyBedroom.Interactables.Add(clothes.Name, clothes);
             return messyBedroom;
         }
         
@@ -247,6 +273,9 @@
                 .SetName("Clean Bedroom")
                 .SetTag("in a Clean Bedroom.")
                 .Build();
+            
+            Interactable closet = Interactable.CreateCheeseInteractable("closet", "You approach the closet. It is a large closet. You search through the closet.", 25);
+            cleanBedroom.Interactables.Add(closet.Name, closet);
             return cleanBedroom;
         }
         
@@ -265,6 +294,9 @@
                 .SetName("Game Room")
                 .SetTag("in a large Game Room.")
                 .Build();
+            
+            Interactable bowl = Interactable.CreateCheeseInteractable("bowl", "You approach a bowl on the floor. It is filled with popcorn. You search through the bowl.", 100);
+            gameRoom.Interactables.Add(bowl.Name, bowl);
             return gameRoom;
         }
         
@@ -284,6 +316,9 @@
                 .SetName("Red Kitchen")
                 .SetTag("in a Red Kitchen.")
                 .Build();
+            
+            Interactable fridge = Interactable.CreateCheeseInteractable("fridge", "You approach the fridge. It appears to be cracked. You search through the fridge.", 100);
+            redKitchen.Interactables.Add(fridge.Name, fridge);
             return redKitchen;
         }
         
@@ -293,6 +328,9 @@
                 .SetName("Red Living Room")
                 .SetTag("in a Red Living Room.")
                 .Build();
+            Interactable couch = Interactable.CreateCheeseInteractable("couch", "You approach the couch. It is a large, red couch. You search under the couch.", 50);
+            redLivingRoom.Interactables.Add(couch.Name, couch);
+            
             return redLivingRoom;
         }
 

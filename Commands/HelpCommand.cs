@@ -35,11 +35,10 @@ Your available commands are:
   - go [direction]: Move in the specified direction (north, south, east, west).
   - whereami: Display the name of the current room.
   - die: Lose a life and return to the last checkpoint.
-  - look: Examine your surroundings and find objects or enemies in the room.
+  - look: Examine your surroundings and find objects.
   - cheese: Display the amount of cheese you currently have.
-  - take [item]: Pick up an item and add it to your inventory.
-  - bite: Attempt to bite the encountered enemy.
   - give [item]: Give an item from your inventory to an encountered enemy.
+  - bite: Attempt to bite the encountered enemy.
   - flee: Attempt to escape from a dangerous situation.
   - quit: Exit the game.
 

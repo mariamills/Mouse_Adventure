@@ -22,7 +22,7 @@ namespace StarterGame
         // Get the previous state of the player from the history
         public PlayerState RestoreState()
         {
-            return _playerStates.Pop();
+              return _playerStates.Pop();
         }
         
         public PlayerState PeekState()

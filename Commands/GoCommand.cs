@@ -14,7 +14,7 @@
         override
         public bool Execute(Player player)
         {
-            if (this.HasSecondWord())
+            if (HasSecondWord())
             {
                 player.WalkTo(SecondWord);
             }

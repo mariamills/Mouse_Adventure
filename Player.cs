@@ -13,7 +13,7 @@ namespace StarterGame
     {
         public Room CurrentRoom { get; set; }
 
-        public int Currency { get; set; }
+        public int Currency { get; private set; }
         public int Lives { get; private set; }
 
         private readonly History _playerHistory;
@@ -41,6 +41,12 @@ namespace StarterGame
                 {
                     _playerHistory.SaveState(CreateState());
                 }
+            }
+            else if (direction.Contains("sink"))
+            {
+                Teleporter teleporter = CurrentRoom.Interactables[direction] as Teleporter;
+                if (teleporter != null) teleporter.Interact(this);
+                _achievementManager.Notify("Teleport", this);
             }
             else
             {
@@ -74,14 +80,16 @@ namespace StarterGame
                 {
                     AchieveMessage("You found " + interactable.CheeseAmount + " cheese!");
                     Currency += interactable.CheeseAmount;
+                    interactable.CheeseAmount = 0;
                     _achievementManager.Notify("CheeseFound", this);
+                    InfoMessage("You now have " + Currency + " cheese.");
                 }
-                CurrentRoom.Interactables.Remove(obj);
+                //CurrentRoom.Interactables.Remove(obj);
                 ScanRoom();
             }
             else
             {
-                InfoMessage("I don't see that.");
+                InfoMessage("I don't see a " + obj + " here.");
             }
         }
 
@@ -89,15 +97,14 @@ namespace StarterGame
         {
             Lives--;
             _achievementManager.Notify("PlayerDeath", this);
+            PlayerState playerState = _playerHistory.RestoreState();
             if (Lives > 0)
             {
-                // If player has no checkpoints, create one
                 if (_playerHistory.Count == 1)
                 {
-                    var lastState = _playerHistory.PeekState();
-                    _playerHistory.SaveState(lastState);
+                    playerState = _playerHistory.PeekState();
                 }
-                LoadCheckpoint(_playerHistory.RestoreState());
+                LoadCheckpoint(playerState);
                 ErrorMessage("\nYou have died. You have " + Lives + " lives left.");
                 InfoMessage("You've returned to your last checkpoint: " + CurrentRoom.Name);
             }
