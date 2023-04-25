@@ -20,6 +20,7 @@ namespace StarterGame.Interactables
             player.CurrentRoom = nextRoom;
             player.WarningMessage("\nYou have been teleported to " + player.CurrentRoom.Name);
             player.InfoMessage("\n" + player.CurrentRoom.Details());
+            player.ScanRoom();
         }
     }
 }

@@ -107,6 +107,7 @@ namespace StarterGame
             // Red House Exits
             pipe4.SetExit("east", pipeHub);
             pipe4.SetExit("west", redKitchen);
+            redKitchen.SetExit("east", pipe4);
             redKitchen.SetExit("north", redLivingRoom);
             redLivingRoom.SetExit("south", redKitchen);
             
@@ -117,7 +118,7 @@ namespace StarterGame
             Teleporter blueKitchenSink = new Teleporter("blue-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?", new List<Room>() {redKitchen, orangeKitchen});
             blueKitchen.Interactables.Add(blueKitchenSink.Name, blueKitchenSink);
 
-            Teleporter redKitchenSink = new Teleporter("red-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?", new List<Room>() {orangeKitchen, redKitchen});
+            Teleporter redKitchenSink = new Teleporter("red-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?", new List<Room>() {orangeKitchen, blueKitchen});
             redKitchen.Interactables.Add(redKitchenSink.Name, redKitchenSink);
 
             return mousetopia;  
@@ -163,7 +164,7 @@ namespace StarterGame
                 .SetTag("in the Cheese Square. The heart of Mousetopia. There is a fountain in the middle of the square. Mice are interacting with each other and there are a few shops on the sides.")
                 .Build();
             
-            Interactable group = new Interactable("group", "You approach a group of mice. You hear them talking about how someone could put a stop to the Mouse Mafia...");
+            Interactable group = new Interactable("group", "You approach a group of mice. You hear them talking about how they wish someone would put a stop to the Mouse Mafia...");
             cheeseSquare.Interactables.Add(group.Name, group);
             Interactable fountain = Interactable.CreateCheeseInteractable("fountain", "You approach the fountain. The fountain is made of stone and is shaped like a mouse. Mice are drinking from the fountain.", 15);
             cheeseSquare.Interactables.Add(fountain.Name, fountain);
