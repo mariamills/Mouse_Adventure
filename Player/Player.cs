@@ -15,8 +15,9 @@ namespace StarterGame.Player
 
         public int Currency { get; private set; }
         public int Lives { get; private set; }
+        public static int MaxCurrency => 10;
 
-        private readonly PlayerHistory _playerPlayerHistory;
+        private readonly PlayerHistory _playerHistory;
         private readonly AchievementManager _achievementManager = AchievementManager.Instance;
 
         public Player(Room room)
@@ -24,8 +25,8 @@ namespace StarterGame.Player
             CurrentRoom = room;
             Lives = 3;
             Currency = 0;
-            _playerPlayerHistory = new PlayerHistory();
-            _playerPlayerHistory.SaveState(CreateState());
+            _playerHistory = new PlayerHistory();
+            _playerHistory.SaveState(CreateState());
         }
 
         public void WalkTo(string direction)
@@ -33,13 +34,14 @@ namespace StarterGame.Player
             Room nextRoom = CurrentRoom.GetExit(direction);
             if (nextRoom != null)
             {
+                _playerHistory.RoomHistory.Push(CurrentRoom);
                 CurrentRoom = nextRoom;
                 _achievementManager.Notify("RoomChange", this);
                 NormalMessage("\n" + CurrentRoom.Details());
                 ScanRoom();
                 if (CurrentRoom.IsCheckPoint)
                 {
-                    _playerPlayerHistory.SaveState(CreateState());
+                    _playerHistory.SaveState(CreateState());
                 }
             }
             else if (direction.Contains("sink"))
@@ -55,8 +57,13 @@ namespace StarterGame.Player
         private void UseTeleporter(string direction)
         {
             Teleporter teleporter = CurrentRoom.Interactables[direction] as Teleporter;
-            if (teleporter != null) teleporter.Interact(this);
-            _achievementManager.Notify("Teleport", this);
+            if (teleporter != null)
+            {
+                teleporter.Interact(this);
+                _playerHistory.RoomHistory = new Stack<Room>();
+                _playerHistory.SaveState(CreateState());
+                _achievementManager.Notify("UsedTeleporter", this);
+            }
         }
 
         public void ScanRoom()
@@ -92,13 +99,20 @@ namespace StarterGame.Player
 
         private void HandleCheeseInteraction(Interactable interactable)
         {
-            if (interactable.CheeseAmount > 0)
+            if (Currency <= MaxCurrency)
             {
-                AchieveMessage($"You found {interactable.CheeseAmount} cheese!");
-                Currency += interactable.CheeseAmount;
-                interactable.CheeseAmount = 0;
-                _achievementManager.Notify("CheeseFound", this);
-                InfoMessage($"You now have {Currency} cheese.");
+                if (interactable.CheeseAmount > 0)
+                {
+                    AchieveMessage($"You found {interactable.CheeseAmount} cheese!");
+                    Currency += interactable.CheeseAmount;
+                    interactable.CheeseAmount = 0;
+                    _achievementManager.Notify("CheeseFound", this);
+                    InfoMessage($"You now have {Currency} cheese.");
+                }
+            }
+            else
+            {
+                ErrorMessage("I can't carry any more cheese. I am just a mouse after all.");
             }
         }
 
@@ -110,17 +124,30 @@ namespace StarterGame.Player
             }
         }
 
+        public void Back()
+        {
+            if (_playerHistory.RoomHistory.Count > 0)
+            {
+                CurrentRoom = _playerHistory.RoomHistory.Pop();
+                NormalMessage("\n" + CurrentRoom.Details());
+                ScanRoom();
+            }
+            else
+            {
+                InfoMessage("There's nowhere to go back to.");
+            }
+        }
 
         public void Die()
         {
             Lives--;
             _achievementManager.Notify("PlayerDeath", this);
-            PlayerState playerState = _playerPlayerHistory.RestoreState();
+            PlayerState playerState = _playerHistory.RestoreState();
             if (Lives > 0)
             {
-                if (_playerPlayerHistory.Count == 1)
+                if (_playerHistory.Count == 1)
                 {
-                    playerState = _playerPlayerHistory.PeekState();
+                    playerState = _playerHistory.PeekState();
                 }
                 LoadCheckpoint(playerState);
                 ErrorMessage("\nYou have died. You have " + Lives + " lives left.");

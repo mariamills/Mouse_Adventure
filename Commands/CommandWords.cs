@@ -8,7 +8,7 @@ namespace StarterGame.Commands
     public class CommandWords
     {
         private readonly Dictionary<string, Command> _commands;
-        private static readonly Command[] CommandArray = { new GoCommand(), new QuitCommand(), new WhereAmICommand(), new CheeseCommand(), new DieCommand(), new LookCommand() };
+        private static readonly Command[] CommandArray = { new GoCommand(), new QuitCommand(), new WhereAmICommand(), new CheeseCommand(), new DieCommand(), new LookCommand(), new BackCommand() };
 
         public CommandWords() : this(CommandArray) {}
 

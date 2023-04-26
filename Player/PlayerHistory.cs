@@ -5,6 +5,7 @@ namespace StarterGame.Player
     public class PlayerHistory
     {
         private readonly Stack<PlayerState> _playerStates = new Stack<PlayerState>();
+        public Stack<Rooms.Room> RoomHistory = new Stack<Rooms.Room>();
         public int Count => _playerStates.Count;
 
         // Check if there is a previous state to restore
