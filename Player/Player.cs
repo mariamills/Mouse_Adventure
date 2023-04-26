@@ -77,26 +77,39 @@ namespace StarterGame.Player
 
         public void Look(string obj)
         {
-            if (CurrentRoom.Interactables.ContainsKey(obj))
+            if (CurrentRoom.Interactables.TryGetValue(obj, out Interactable interactable))
             {
-                Interactable interactable = CurrentRoom.Interactables[obj];
                 NormalMessage(interactable.Description);
-                if (interactable.CheeseAmount > 0)
-                {
-                    AchieveMessage("You found " + interactable.CheeseAmount + " cheese!");
-                    Currency += interactable.CheeseAmount;
-                    interactable.CheeseAmount = 0;
-                    _achievementManager.Notify("CheeseFound", this);
-                    InfoMessage("You now have " + Currency + " cheese.");
-                }
-                //CurrentRoom.Interactables.Remove(obj);
+                HandleCheeseInteraction(interactable);
+                RemoveInteractableIfNotTeleporter(obj, interactable);
                 ScanRoom();
             }
             else
             {
-                InfoMessage("I don't see a " + obj + " here.");
+                InfoMessage($"I don't see a {obj} here.");
             }
         }
+
+        private void HandleCheeseInteraction(Interactable interactable)
+        {
+            if (interactable.CheeseAmount > 0)
+            {
+                AchieveMessage($"You found {interactable.CheeseAmount} cheese!");
+                Currency += interactable.CheeseAmount;
+                interactable.CheeseAmount = 0;
+                _achievementManager.Notify("CheeseFound", this);
+                InfoMessage($"You now have {Currency} cheese.");
+            }
+        }
+
+        private void RemoveInteractableIfNotTeleporter(string obj, Interactable interactable)
+        {
+            if (!(interactable is Teleporter))
+            {
+                CurrentRoom.Interactables.Remove(obj);
+            }
+        }
+
 
         public void Die()
         {
