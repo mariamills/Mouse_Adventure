@@ -8,9 +8,13 @@
         public int Defense { get; set; }
         public bool IsFriendly { get; set; }
         
-        public Giant() : base("Giant", 10, 5, 5)
+        public Giant() : base("Giant", Enemy.RandomNumber(0, 10), false)
         {
-            IsFriendly = false;
+        }
+        
+        public override void DoAttack(Player.Player player)
+        {
+            player.BattleMessage(Name + " steps on you.");
         }
     }
 }

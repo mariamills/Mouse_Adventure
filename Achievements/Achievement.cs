@@ -20,7 +20,7 @@ namespace StarterGame.Achievements
             if (!Unlocked)
             {
                 Unlocked = true;
-                player.AchieveMessage("🎖🏅Achievement Unlocked: [" + Name + "] - " + Description);
+                player.AchieveMessage("🎖️Achievement Unlocked: [" + Name + "] - " + Description);
             }
         }
         

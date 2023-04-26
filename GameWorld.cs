@@ -111,7 +111,7 @@ namespace StarterGame
             redKitchen.SetExit("east", pipe4);
             redKitchen.SetExit("north", redLivingRoom);
             redLivingRoom.SetExit("south", redKitchen);
-            
+
             // Set up teleporters
             Teleporter orangeKitchenSink = new Teleporter("orange-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?", new List<Room>() {redKitchen, blueKitchen});
             orangeKitchen.Interactables.Add(orangeKitchenSink.Name, orangeKitchenSink);
@@ -169,6 +169,11 @@ namespace StarterGame
             cheeseSquare.Interactables.Add(group.Name, group);
             Interactable fountain = Interactable.CreateCheeseInteractable("fountain", "You approach the fountain. The fountain is made of stone and is shaped like a mouse. Mice are drinking from the fountain.", 15);
             cheeseSquare.Interactables.Add(fountain.Name, fountain);
+            
+            // For testing
+            Interactable test = Interactable.CreateCheeseInteractable("test", "You approach the fountain. The fountain is made of stone and is shaped like a mouse. Mice are drinking from the fountain.", 100);
+            cheeseSquare.Interactables.Add(test.Name, test);
+            return cheeseSquare;
             return cheeseSquare;
         }
         
@@ -178,9 +183,8 @@ namespace StarterGame
                 .SetName("Sewer")
                 .SetTag("in the Sewer. There are pipes everywhere.")
                 .Build();
-            
-            Enemy cat = EnemyFactory.CreateEnemy("cat");
-            sewer.Enemy = cat;
+
+            sewer.Enemy = EnemyFactory.CreateEnemy("Cat");
             return sewer;
         }
         

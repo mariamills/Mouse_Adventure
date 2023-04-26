@@ -7,10 +7,14 @@
         public int Attack { get; set; }
         public int Defense { get; set; }
         public bool IsFriendly { get; set; }
-        
-        public Dog() : base("Dog", 10, 5, 5)
+
+        public Dog() : base("Dog", 3, true)
         {
-            IsFriendly = true;
+        }
+        
+        public override void DoAttack(Player.Player player)
+        {
+            player.BattleMessage(Name + " bites you.");
         }
     }
 }

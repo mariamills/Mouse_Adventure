@@ -22,7 +22,7 @@ namespace StarterGame.Interactables
 
             if (Random.NextDouble() < cheeseProbability / 100.0)
             {
-                cheeseAmount = Random.Next(1, 4); // Generate a random cheese amount between 1 and 3.
+                cheeseAmount = Random.Next(5, 7); // Generate a random cheese amount between 1 and 3.
             }
 
             return new Interactable(name, description, cheeseAmount);

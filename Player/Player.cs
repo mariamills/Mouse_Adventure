@@ -18,16 +18,18 @@ namespace StarterGame.Player
         public int Currency { get; private set; }
         public int Lives { get; private set; }
         public static int MaxCurrency => 10;
-
+        public bool IsInCombat { get; private set; }
         private readonly PlayerHistory _playerHistory;
         private readonly AchievementManager _achievementManager = AchievementManager.Instance;
-        private Parser _parser = new Parser();
+        private static readonly Command[] CombatCommands = {new BiteCommand(), new FleeCommand()};
+        private readonly Parser _combatParser = new Parser(new CommandWords(CombatCommands));
 
         public Player(Room room)
         {
             CurrentRoom = room;
             Lives = 3;
             Currency = 0;
+            IsInCombat = false;
             _playerHistory = new PlayerHistory();
             _playerHistory.SaveState(CreateState());
         }
@@ -63,25 +65,26 @@ namespace StarterGame.Player
             Enemy enemy = CurrentRoom.Enemy;
             if (enemy != null)
             {
-                NormalMessage($"An {enemy.Name} is coming towards you. What will you do?");
+                IsInCombat = true;
+                _achievementManager.Notify("EnemyEncounter", this);
+                WarningMessage($"An {enemy.Name} is coming towards you. What will you do?");
                 HandleEnemyInteraction(enemy);
             }
         }
 
         private void HandleEnemyInteraction(Enemy enemy)
         {
-            bool finished = false;
-            while (!finished)
+            while (IsInCombat)
             {
-                Console.Write("\n>");
-                Command command = _parser.ParseCommand(Console.ReadLine());
+                Console.Write(">");
+                Command command = _combatParser.ParseCommand(Console.ReadLine());
                 if (command == null)
                 {
                     ErrorMessage("I don't understand...");
                 }
                 else
                 {
-                    finished = command.Execute(this);
+                    IsInCombat = command.Execute(this);
                 }
             }
         }
@@ -120,7 +123,7 @@ namespace StarterGame.Player
             {
                 NormalMessage(interactable.Description);
                 HandleCheeseInteraction(interactable);
-                RemoveInteractableIfNotTeleporter(obj, interactable);
+                RemoveInteractable(obj, interactable);
                 ScanRoom();
             }
             else
@@ -144,13 +147,13 @@ namespace StarterGame.Player
             }
             else
             {
-                ErrorMessage("I can't carry any more cheese. I am just a mouse after all.");
+                ErrorMessage("I have enough to pay the toll. I should go home.");
             }
         }
 
-        private void RemoveInteractableIfNotTeleporter(string obj, Interactable interactable)
+        private void RemoveInteractable(string obj, Interactable interactable)
         {
-            if (!(interactable is Teleporter))
+            if (!(interactable is Teleporter) && interactable.CheeseAmount == 0)
             {
                 CurrentRoom.Interactables.Remove(obj);
             }
@@ -168,6 +171,39 @@ namespace StarterGame.Player
             {
                 InfoMessage("There's nowhere to go back to.");
             }
+        }
+        
+        //Combat
+        public void Bite()
+        {
+            Enemy enemy = CurrentRoom.Enemy;
+            BattleMessage("You've chosen to bite " + CurrentRoom.Enemy.Name);
+            if (enemy.IsFriendly)
+            {
+                BattleMessage(enemy.Name + " looks at you with disappointment and walks away.");
+                CurrentRoom.Enemy = null;
+            }
+            else
+            {
+                if (enemy.ScareLevel < 5)
+                {
+                    BattleMessage(enemy.Name + " has run away.");
+                    CurrentRoom.Enemy = null;
+                    IsInCombat = false;
+                    _achievementManager.Notify("EnemyDefeated", this);
+                }
+                else
+                {
+                    enemy.DoAttack(this);
+                    Die();
+                }
+            }
+        }
+
+        public void Flee()
+        {
+            BattleMessage("You've chosen to flee and return to the previous room.");
+            Back();
         }
 
         public void Die()
@@ -188,11 +224,8 @@ namespace StarterGame.Player
             else
             {
                 ErrorMessage("\nYou have died. You have no lives left. Game Over.");
-                _achievementManager.Notify("GameOver", this);
+                _achievementManager.Notify("DeadDead", this);
                 // TODO: Game Over
-                // This doesn't work.
-                Command command = new QuitCommand();
-                command.Execute(this);
             }
         }
 
@@ -231,6 +264,11 @@ namespace StarterGame.Player
         public void AchieveMessage(string message)
         {
             ColoredMessage(message, ConsoleColor.Green);
+        }
+
+        public void BattleMessage(string message)
+        {
+            ColoredMessage(message, ConsoleColor.Magenta);
         }
 
         public void InfoMessage(string message)

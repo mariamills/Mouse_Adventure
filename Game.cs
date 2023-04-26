@@ -18,7 +18,6 @@ namespace StarterGame
 
         public Game()
         {
-            _playing = false;
             _parser = new Parser(new CommandWords());
             _achievementManager = AchievementManager.Instance;
             _player = new Player.Player(GameWorld.Instance.CreateWorld());
@@ -29,6 +28,7 @@ namespace StarterGame
         {
             _achievementManager.RegisterObserver(new HomesickAchievement());
             _achievementManager.RegisterObserver(new NotBeginnersLuckAchievement());
+            _achievementManager.RegisterObserver(new GameOverAchievement());
         }
 
 
@@ -42,7 +42,7 @@ namespace StarterGame
             // execute them until the game is over.
 
             bool finished = false;
-            while (!finished)
+            while (!finished && _player.Lives > 0)
             {
                 Console.Write("\n>");
                 Command command = _parser.ParseCommand(Console.ReadLine());
