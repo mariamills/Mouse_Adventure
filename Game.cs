@@ -12,9 +12,9 @@ namespace StarterGame
     public class Game
     {
         private readonly Player.Player _player;
-        private readonly Parser _parser;
         private bool _playing;
         private readonly AchievementManager _achievementManager;
+        private readonly Parser _parser;
 
         public Game()
         {

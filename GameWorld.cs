@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using StarterGame.Enemies;
 using StarterGame.Interactables;
 using StarterGame.Rooms;
 
@@ -177,6 +178,9 @@ namespace StarterGame
                 .SetName("Sewer")
                 .SetTag("in the Sewer. There are pipes everywhere.")
                 .Build();
+            
+            Enemy cat = EnemyFactory.CreateEnemy("cat");
+            sewer.Enemy = cat;
             return sewer;
         }
         
@@ -335,6 +339,13 @@ namespace StarterGame
             redLivingRoom.Interactables.Add(couch.Name, couch);
             
             return redLivingRoom;
+        }
+        
+        // Create enemies
+        private Enemy CreateCat()
+        {
+            Enemy cat = EnemyFactory.CreateEnemy("Cat");
+            return cat;
         }
 
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using StarterGame.Achievements;
+using StarterGame.Commands;
+using StarterGame.Enemies;
 using StarterGame.Interactables;
 using StarterGame.Rooms;
 
@@ -19,6 +21,7 @@ namespace StarterGame.Player
 
         private readonly PlayerHistory _playerHistory;
         private readonly AchievementManager _achievementManager = AchievementManager.Instance;
+        private Parser _parser = new Parser();
 
         public Player(Room room)
         {
@@ -37,6 +40,7 @@ namespace StarterGame.Player
                 _playerHistory.RoomHistory.Push(CurrentRoom);
                 CurrentRoom = nextRoom;
                 _achievementManager.Notify("RoomChange", this);
+                EnemyEncounter();
                 NormalMessage("\n" + CurrentRoom.Details());
                 ScanRoom();
                 if (CurrentRoom.IsCheckPoint)
@@ -51,6 +55,34 @@ namespace StarterGame.Player
             else
             {
                 ErrorMessage("\nThere is no path in the " + direction);
+            }
+        }
+
+        private void EnemyEncounter()
+        {
+            Enemy enemy = CurrentRoom.Enemy;
+            if (enemy != null)
+            {
+                NormalMessage($"An {enemy.Name} is coming towards you. What will you do?");
+                HandleEnemyInteraction(enemy);
+            }
+        }
+
+        private void HandleEnemyInteraction(Enemy enemy)
+        {
+            bool finished = false;
+            while (!finished)
+            {
+                Console.Write("\n>");
+                Command command = _parser.ParseCommand(Console.ReadLine());
+                if (command == null)
+                {
+                    ErrorMessage("I don't understand...");
+                }
+                else
+                {
+                    finished = command.Execute(this);
+                }
             }
         }
 
@@ -142,13 +174,13 @@ namespace StarterGame.Player
         {
             Lives--;
             _achievementManager.Notify("PlayerDeath", this);
-            PlayerState playerState = _playerHistory.RestoreState();
+            PlayerState playerState = _playerHistory.PeekState();
             if (Lives > 0)
             {
-                if (_playerHistory.Count == 1)
+                if (_playerHistory.Count > 1)
                 {
-                    playerState = _playerHistory.PeekState();
-                }
+                    playerState = _playerHistory.RestoreState();
+                } 
                 LoadCheckpoint(playerState);
                 ErrorMessage("\nYou have died. You have " + Lives + " lives left.");
                 InfoMessage("You've returned to your last checkpoint: " + CurrentRoom.Name);
@@ -156,7 +188,11 @@ namespace StarterGame.Player
             else
             {
                 ErrorMessage("\nYou have died. You have no lives left. Game Over.");
+                _achievementManager.Notify("GameOver", this);
                 // TODO: Game Over
+                // This doesn't work.
+                Command command = new QuitCommand();
+                command.Execute(this);
             }
         }
 

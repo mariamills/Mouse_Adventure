@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using StarterGame.Enemies;
 using StarterGame.Interactables;
 
 namespace StarterGame.Rooms
@@ -14,6 +15,7 @@ namespace StarterGame.Rooms
         public string Tag { get { return _tag; } set { _tag = value; } }
         public string Name { get { return _name; } set { _name = value; } }
         public bool IsCheckPoint { get; set; }
+        public Enemy Enemy { get; set; }
 
         public Dictionary<string, Interactable> Interactables { get; }
 
