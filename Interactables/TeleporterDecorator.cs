@@ -4,11 +4,11 @@ using StarterGame.Rooms;
 
 namespace StarterGame.Interactables
 {
-    public class Teleporter : Interactable
+    public class TeleporterDecorator : Interactable
     {
         private readonly List<Room> _possibleDestinations;
         private Random _random;
-        public Teleporter(string name, string description, List<Room> possibleDestinations) : base(name, description)
+        public TeleporterDecorator(Interactable interactable, List<Room> possibleDestinations) : base(interactable.Name, interactable.Description)
         {
             _possibleDestinations = possibleDestinations;
             _random = new Random();
@@ -21,6 +21,13 @@ namespace StarterGame.Interactables
             player.WarningMessage("\nYou have been teleported to " + player.CurrentRoom.Name);
             player.InfoMessage("\n" + player.CurrentRoom.Details());
             player.ScanRoom();
+        }
+        
+        public void EnterBossRoom(Player.Player player)
+        {
+            player.CurrentRoom = _possibleDestinations[0];
+            player.BattleMessage("You've entered "+ player.CurrentRoom.Name + "!");
+            player.InfoMessage("\n" + player.CurrentRoom.Tag);
         }
     }
 }

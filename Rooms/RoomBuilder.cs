@@ -1,4 +1,5 @@
-﻿using StarterGame.Interactables;
+﻿using StarterGame.Enemies;
+using StarterGame.Interactables;
 
 namespace StarterGame.Rooms
 {
@@ -32,6 +33,12 @@ namespace StarterGame.Rooms
         public RoomBuilder AddInteractable(Interactable interactable)
         {
             _room.Interactables.Add(interactable.Name, interactable);
+            return this;
+        }
+        
+        public RoomBuilder AddEnemy(Enemy enemy)
+        {
+            _room.Enemy = enemy;
             return this;
         }
 

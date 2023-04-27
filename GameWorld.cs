@@ -113,39 +113,51 @@ namespace StarterGame
             redLivingRoom.SetExit("south", redKitchen);
 
             // Set up teleporters
-            Teleporter orangeKitchenSink = new Teleporter("orange-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?", new List<Room>() {redKitchen, blueKitchen});
+            Interactable orangeKitchenSink = new TeleporterDecorator(new SimpleInteractable("orange-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?"), new List<Room>() {redKitchen, blueKitchen});
             orangeKitchen.Interactables.Add(orangeKitchenSink.Name, orangeKitchenSink);
             
-            Teleporter blueKitchenSink = new Teleporter("blue-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?", new List<Room>() {redKitchen, orangeKitchen});
+            Interactable blueKitchenSink = new TeleporterDecorator(new SimpleInteractable("blue-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?"), new List<Room>() {redKitchen, orangeKitchen});
             blueKitchen.Interactables.Add(blueKitchenSink.Name, blueKitchenSink);
 
-            Teleporter redKitchenSink = new Teleporter("red-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?", new List<Room>() {orangeKitchen, blueKitchen});
+            Interactable redKitchenSink = new TeleporterDecorator(new SimpleInteractable("red-sink", "You approach the kitchen sink. The drain looks large enough to fit a mouse...maybe give it a \'go\'?"), new List<Room>() {orangeKitchen, blueKitchen});
             redKitchen.Interactables.Add(redKitchenSink.Name, redKitchenSink);
+            
+            Interactable mafiaHideoutToRatataxLair = new TeleporterDecorator(new SimpleInteractable("red-door", "You see a red door in the back. Wonder where it could lead. Maybe give it a \'go\'?"), new List<Room>() {CreateRatataxLair()});
+            mafiaHideout.Interactables.Add(mafiaHideoutToRatataxLair.Name, mafiaHideoutToRatataxLair);
 
             return mousetopia;  
         }
 
+        private Room CreateRatataxLair()
+        {
+            Enemy ratatax = EnemyFactory.CreateEnemy("Ratatax");
+            Room ratataxLair = new RoomBuilder()
+                .SetName("Ratatax's Lair")
+                .SetTag("in Ratatax's Lair. There is a large throne in the middle of the room, there is a large mouse sitting on it surrounded by other mice.")
+                .AddEnemy(ratatax)
+                .Build();
+            return ratataxLair;
+        }
+
         private Room CreateMafiaHideout()
         {
+            Interactable briefcase = new SimpleInteractable("briefcase", "You approach the briefcase. The mice around the table are looking at you angrily. Best not to touch it...");
             Room mafiaHideout = new RoomBuilder()
                 .SetName("Mafia Hideout")
                 .SetTag("in the Mouse Mafia Hideout. There are a few scary looking mice sitting around a table with a briefcase in the middle.")
+                .AddInteractable(briefcase)
                 .Build();
-            
-            Interactable briefcase = new Interactable("briefcase", "You approach the briefcase. The mice around the table are looking at you angrily. Best not to touch it...");
-            mafiaHideout.Interactables.Add(briefcase.Name, briefcase);
             return mafiaHideout;
         }
         
         private Room CreateBackAlley()
         {
+            Interactable dumpster = new CheeseDecorator(new SimpleInteractable("dumpster", "You approach the dumpster. It smells like cheese..."), 80);
             Room backAlley = new RoomBuilder()
                 .SetName("Back Alley")
                 .SetTag("in the Back Alley. There are a few dumpsters and abandoned buildings on the sides.")
+                .AddInteractable(dumpster)
                 .Build();
-
-            Interactable dumpster = Interactable.CreateCheeseInteractable("dumpster", "You approach the dumpster. It smells wonderful.", 50);
-            backAlley.Interactables.Add("dumpster", dumpster);
             return backAlley;
         }
 
@@ -160,20 +172,15 @@ namespace StarterGame
         
         private Room CreateCheeseSquare()
         {
+            Interactable group = new SimpleInteractable("group", "You approach a group of mice. You hear them talking about how they wish someone would put a stop to the Mouse Mafia...");
+            Interactable fountain = new CheeseDecorator(new SimpleInteractable("fountain", "You approach the fountain. The fountain is made of stone and is shaped like a mouse. Mice are drinking from the fountain."), 15);
             Room cheeseSquare = new RoomBuilder()
                 .SetName("Cheese Square")
                 .SetTag("in the Cheese Square. The heart of Mousetopia. There is a fountain in the middle of the square. Mice are interacting with each other and there are a few shops on the sides.")
+                .AddInteractable(group)
+                .AddInteractable(fountain)
+                .AddEnemy(new Dog())
                 .Build();
-            
-            Interactable group = new Interactable("group", "You approach a group of mice. You hear them talking about how they wish someone would put a stop to the Mouse Mafia...");
-            cheeseSquare.Interactables.Add(group.Name, group);
-            Interactable fountain = Interactable.CreateCheeseInteractable("fountain", "You approach the fountain. The fountain is made of stone and is shaped like a mouse. Mice are drinking from the fountain.", 15);
-            cheeseSquare.Interactables.Add(fountain.Name, fountain);
-            
-            // For testing
-            Interactable test = Interactable.CreateCheeseInteractable("test", "You approach the fountain. The fountain is made of stone and is shaped like a mouse. Mice are drinking from the fountain.", 100);
-            cheeseSquare.Interactables.Add(test.Name, test);
-            return cheeseSquare;
             return cheeseSquare;
         }
         
@@ -182,9 +189,8 @@ namespace StarterGame
             Room sewer = new RoomBuilder()
                 .SetName("Sewer")
                 .SetTag("in the Sewer. There are pipes everywhere.")
+                .AddEnemy(new Cat())
                 .Build();
-
-            sewer.Enemy = EnemyFactory.CreateEnemy("Cat");
             return sewer;
         }
         
@@ -235,13 +241,13 @@ namespace StarterGame
         
         private Room CreateBlueKitchen()
         {
+            Interactable fridge = new CheeseDecorator(new SimpleInteractable("fridge", "You approach the fridge. What's that smell..?"), 100);
             Room blueKitchen = new RoomBuilder()
                 .SetName("Blue Kitchen")
                 .SetTag("in a Blue Kitchen.")
+                .AddInteractable(fridge)
                 .Build();
             
-            Interactable fridge = Interactable.CreateCheeseInteractable("fridge", "You approach the fridge. What's that smell..?", 100);
-            blueKitchen.Interactables.Add(fridge.Name, fridge);
             return blueKitchen;
         }
         
@@ -265,28 +271,25 @@ namespace StarterGame
         
         private Room CreateMessyBedroom()
         {
+            Interactable bed = new CheeseDecorator(new SimpleInteractable("bed", "You approach the bed. It looks like someone has been sleeping up there. You search under the bed."), 50);
+            Interactable clothes = new CheeseDecorator(new SimpleInteractable("clothes", "You approach the pile of clothes. It has a familiar smell. You search through the pile."), 75);
             Room messyBedroom = new RoomBuilder()
                 .SetName("Messy Bedroom")
                 .SetTag("in a Messy Bedroom.")
+                .AddInteractable(bed)
+                .AddInteractable(clothes)
                 .Build();
-            
-            Interactable bed = Interactable.CreateCheeseInteractable("bed", "You approach the bed. It looks like someone has been sleeping up there. You search under the bed.", 50);
-            messyBedroom.Interactables.Add(bed.Name, bed);
-            
-            Interactable clothes = Interactable.CreateCheeseInteractable("clothes", "You approach the pile of clothes. It has a familiar smell. You search through the pile.", 75);
-            messyBedroom.Interactables.Add(clothes.Name, clothes);
             return messyBedroom;
         }
         
         private Room CreateCleanBedroom()
         {
+            Interactable closet = new CheeseDecorator(new SimpleInteractable("closet", "You approach the closet. It is a large closet. You search through the closet."), 25);
             Room cleanBedroom = new RoomBuilder()
                 .SetName("Clean Bedroom")
                 .SetTag("in a Clean Bedroom.")
+                .AddInteractable(closet)
                 .Build();
-            
-            Interactable closet = Interactable.CreateCheeseInteractable("closet", "You approach the closet. It is a large closet. You search through the closet.", 25);
-            cleanBedroom.Interactables.Add(closet.Name, closet);
             return cleanBedroom;
         }
         
@@ -301,13 +304,12 @@ namespace StarterGame
         
         private Room CreateGameRoom()
         {
+            Interactable bowl = new CheeseDecorator(new SimpleInteractable("bowl", "You approach a bowl on the floor. It is filled with popcorn. You search through the bowl."), 100);
             Room gameRoom = new RoomBuilder()
                 .SetName("Game Room")
                 .SetTag("in a large Game Room.")
+                .AddInteractable(bowl)
                 .Build();
-            
-            Interactable bowl = Interactable.CreateCheeseInteractable("bowl", "You approach a bowl on the floor. It is filled with popcorn. You search through the bowl.", 100);
-            gameRoom.Interactables.Add(bowl.Name, bowl);
             return gameRoom;
         }
         
@@ -323,143 +325,24 @@ namespace StarterGame
         
         private Room CreateRedKitchen()
         {
+           // Interactable fridge = Interactable.CreateCheeseInteractable("fridge", "You approach the fridge. It appears to be cracked. You search through the fridge.", 100);
             Room redKitchen = new RoomBuilder()
                 .SetName("Red Kitchen")
                 .SetTag("in a Red Kitchen.")
+             //   .AddInteractable(fridge)
                 .Build();
-            
-            Interactable fridge = Interactable.CreateCheeseInteractable("fridge", "You approach the fridge. It appears to be cracked. You search through the fridge.", 100);
-            redKitchen.Interactables.Add(fridge.Name, fridge);
             return redKitchen;
         }
         
         private Room CreateRedLivingRoom()
         {
+         //   Interactable couch = Interactable.CreateCheeseInteractable("couch", "You approach the couch. It is a large, red couch. You search under the couch.", 50);
             Room redLivingRoom = new RoomBuilder()
                 .SetName("Red Living Room")
                 .SetTag("in a Red Living Room.")
+             //   .AddInteractable(couch)
                 .Build();
-            Interactable couch = Interactable.CreateCheeseInteractable("couch", "You approach the couch. It is a large, red couch. You search under the couch.", 50);
-            redLivingRoom.Interactables.Add(couch.Name, couch);
-            
             return redLivingRoom;
         }
-        
-        // Create enemies
-        private Enemy CreateCat()
-        {
-            Enemy cat = EnemyFactory.CreateEnemy("Cat");
-            return cat;
-        }
-
-
-        /*  public Room CreateWorld()
-          {
-              // Mouse Mafia
-              Room mafiaHideout = new Room("in the Mouse Mafia Hideout", "Mouse Mafia Hideout", "The Mouse Mafia Hideout is a small, dark room. There are about five mice sitting around the table, all of them are wearing black suits and black ties. There is a large, black briefcase on the table.");
-              Room backAlley = new Room("in the back alley", "Back Alley", "The Back Alley is a dark, narrow alleyway. There are a few dumpsters and trash cans scattered around and nothing but abandoned buildings on either side.");
-              
-              // Mouse Mafia Interactables
-              Interactable briefcase = new Interactable("briefcase", "You approach the briefcase. The surrounding mice look at you with suspicion. Best to leave it alone.");
-              mafiaHideout.Interactables.Add("briefcase", briefcase);
-  
-              // Mousetopia
-              Room cheeseSquare = new Room("in the Cheese Square", "Cheese Square", "The Cheese Square is a large, open area with a fountain in the middle. There are a few benches scattered around. Mice are interacting with each other and there are a few shops on the sides.");
-              Room mousetopia = new Room("in the comfort of Mousetopia", "Mousetopia", "The entrance to Mousetopia, the home of the mice.");
-              Room sewer = new Room("in the sewer, connecting Mousetopia to the Giant's territory", "Sewer", "The Sewer is a dark, damp tunnel. There are a few puddles of water on the ground.");
-              Room pipeHub = new Room("in the pipe hub, where multiple pipes lead to different Giant's houses", "Pipe Hub", "The Pipe Hub is a large, open area. There are four pipes...wonder where they lead?");
-              
-              // Mousetopia Interactables
-              Interactable cheeseFountain = new Interactable("fountain", "You approach the fountain. There are a few mice drinking from it.");
-              cheeseSquare.Interactables.Add("fountain", cheeseFountain);
-              
-              // Giant's Territory
-              // Orange House
-              Room orangeHouseBathroom = new Room("in a orange bathroom", "Pipe 1", "The Orange Bathroom is a small, dark room.");
-              Room orangeHouseKitchen = new Room("in a orange kitchen", "Orange Kitchen", "The Orange Kitchen is a large, open area.");
-              
-              // Blue House
-              Room blueHouseBathroom = new Room("in a blue bathroom", "Pipe 2", "The Blue Bathroom is a small, dark room.");
-              Room blueHouseLivingRoom = new Room("in a blue living room", "Blue Living Room", "The Blue Living Room is a large, open area.");
-              Room blueHouseKitchen = new Room("in a blue kitchen", "Blue Kitchen", "The Blue Kitchen is a large, open area.");
-              Room blueHouseDiningRoom = new Room("in a blue dining room", "Blue Dining Room", "The Blue Dining Room is a large, open area.");
-              
-              // Green House
-              Room greenHouseBathroom = new Room("in a green bathroom", "Pipe 3", "The Green Bathroom is a large room.");
-              Room greenHouseBedroom1 = new Room("in a messy room...", "Messy Room", "This room is a mess.");
-              Room greenHouseBedroom2 = new Room("in a clean room...", "Clean Room", "This room is clean.");
-              Room greenHouseHallway = new Room("in a hallway", "Hallway", "The Hallway is a long, narrow hallway.");
-              Room greenHouseGameRoom = new Room("in a game room", "Game Room", "The Game Room is a large, open area.");
-              
-              // Red House
-              Room redHouseBathroom = new Room("in a red bathroom", "Pipe 4", "The Red Bathroom is a small.");
-              Room redHouseKitchen = new Room("in a red kitchen", "Red Kitchen", "The Red Kitchen is a large, open area.");
-              Room redHouseLivingRoom = new Room("in a red living room", "Red Living Room", "The Red Living Room is a large, open area.");
-  
-              mafiaHideout.SetExit("east", backAlley);
-              
-              backAlley.SetExit("west", mafiaHideout);
-              backAlley.SetExit("south", cheeseSquare);
-              
-              cheeseSquare.SetExit("north", backAlley);
-              cheeseSquare.SetExit("east", mousetopia);
-              
-              mousetopia.SetExit("west", cheeseSquare);
-              mousetopia.SetExit("south", sewer);
-  
-              sewer.SetExit("north", mousetopia);
-              sewer.SetExit("south", pipeHub);
-              
-              pipeHub.SetExit("north", sewer);
-              pipeHub.SetExit("west", orangeHouseBathroom);
-              pipeHub.SetExit("south", greenHouseBathroom);
-              pipeHub.SetExit("east", redHouseBathroom);
-              pipeHub.SetExit("southwest", blueHouseBathroom);
-              
-              // Orange House
-              orangeHouseBathroom.SetExit("east", pipeHub);
-              orangeHouseBathroom.SetExit("west", orangeHouseKitchen);
-              orangeHouseKitchen.SetExit("east", orangeHouseBathroom);
-              
-              // Blue House
-              blueHouseBathroom.SetExit("northeast", pipeHub);
-              blueHouseBathroom.SetExit("west", blueHouseLivingRoom);
-              
-              blueHouseLivingRoom.SetExit("east", blueHouseBathroom);
-              blueHouseLivingRoom.SetExit("north", blueHouseKitchen);
-              
-              blueHouseKitchen.SetExit("south", blueHouseLivingRoom);
-              blueHouseLivingRoom.SetExit("west", blueHouseDiningRoom);
-              
-              blueHouseDiningRoom.SetExit("east", blueHouseLivingRoom);
-              
-              // Green House
-              greenHouseBathroom.SetExit("north", pipeHub);
-              greenHouseBathroom.SetExit("west", greenHouseBedroom1);
-              greenHouseBathroom.SetExit("east", greenHouseBedroom2);
-              
-              greenHouseBedroom1.SetExit("east", greenHouseBathroom);
-              greenHouseBedroom1.SetExit("south", greenHouseHallway);
-              
-              greenHouseBedroom2.SetExit("west", greenHouseBathroom);
-              greenHouseBedroom2.SetExit("south", greenHouseHallway);
-              
-              greenHouseHallway.SetExit("northwest", greenHouseBedroom1);
-              greenHouseHallway.SetExit("northeast", greenHouseBedroom2);
-              greenHouseHallway.SetExit("south", greenHouseGameRoom);
-              
-              greenHouseGameRoom.SetExit("north", greenHouseHallway);
-              
-              // Red House
-              redHouseBathroom.SetExit("west", pipeHub);
-              redHouseBathroom.SetExit("east", redHouseKitchen);
-              redHouseKitchen.SetExit("west", redHouseBathroom);
-              redHouseKitchen.SetExit("north", redHouseLivingRoom);
-              redHouseLivingRoom.SetExit("south", redHouseKitchen);
-   
-              
-              return mousetopia;
-          }
-  */
     }
 }

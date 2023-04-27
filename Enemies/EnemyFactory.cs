@@ -10,6 +10,9 @@ namespace StarterGame.Enemies
             Enemy enemy = null;
             switch (enemyType)
             {
+                case "Ratatax":
+                    enemy = new Ratatax();
+                    break;
                 case "Giant":
                     enemy = new Giant();
                     break;

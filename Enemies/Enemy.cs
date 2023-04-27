@@ -6,13 +6,13 @@ namespace StarterGame.Enemies
     {
         private static readonly Random Random = new Random();
         public string Name { get; set; }
-        public int ScareLevel { get; set; }
+        public int ScaredChance { get; set; }
         public bool IsFriendly { get; set; }
 
-        public Enemy(string name, int scareLevel, bool isFriendly)
+        public Enemy(string name, int scaredChance, bool isFriendly)
         {
             Name = name;
-            ScareLevel = scareLevel;
+            ScaredChance = scaredChance;
             IsFriendly = isFriendly;
         }
 

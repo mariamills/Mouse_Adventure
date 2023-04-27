@@ -32,15 +32,18 @@
 
 Your available commands are:
   - help: Display this help message.
+  - hint: Display a game hint.
   - go [direction]: Move in the specified direction (north, south, east, west).
   - whereami: Display the name of the current room.
   - die: Lose a life and return to the last checkpoint.
   - look: Search an object in the room for cheese.
   - cheese: Display the amount of cheese you currently have.
-  - give [item]: Give an item from your inventory to an encountered enemy.
+  - quit: Exit the game.
+------COMBAT COMMANDS------
+  - give [amount] [item]: Give an item(only cheese currently) from your inventory to an encountered enemy.
   - bite: Attempt to bite the encountered enemy.
   - flee: Attempt to escape from a dangerous situation.
-  - quit: Exit the game.
+  - whistle: Whistle for help. This command can only be used ONCE. Choose when wisely.
 
 Tips:
 - Explore different rooms to find cheese and try to avoid enemies.

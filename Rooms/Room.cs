@@ -52,7 +52,6 @@ namespace StarterGame.Rooms
             return exitNames;
         }
 
-
         public string Details()
         {
             return "You are " + Tag + "\n" + GetExits();

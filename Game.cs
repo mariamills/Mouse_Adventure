@@ -29,6 +29,8 @@ namespace StarterGame
             _achievementManager.RegisterObserver(new HomesickAchievement());
             _achievementManager.RegisterObserver(new NotBeginnersLuckAchievement());
             _achievementManager.RegisterObserver(new GameOverAchievement());
+            _achievementManager.RegisterObserver(new FearlessAchievement());
+            _achievementManager.RegisterObserver(new CheeseTaxAchievement());
         }
 
 
