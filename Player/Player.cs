@@ -15,12 +15,12 @@ namespace StarterGame.Player
     {
         public Room CurrentRoom { get; set; }
 
-        public int Currency { get; private set; }
-        public int Lives { get; private set; }
-        public bool IsInCombat { get; private set; }
-        private static readonly int MaxCurrency = 10;
+        public int Currency { get; set; }
+        public int Lives { get; set; }
+        public bool IsInCombat { get; set; }
+        public readonly AchievementManager AchievementManager = AchievementManager.Instance;
+        private static readonly int MaxCurrency = 15;
         private readonly PlayerHistory _playerHistory;
-        private readonly AchievementManager _achievementManager = AchievementManager.Instance;
         private static readonly Command[] CombatCommands = {new BiteCommand(), new FleeCommand(), new GiveCommand(), new WhistleCommand()};
         private readonly Parser _combatParser = new Parser(new CommandWords(CombatCommands));
 
@@ -45,7 +45,7 @@ namespace StarterGame.Player
                 }
                 _playerHistory.RoomHistory.Push(CurrentRoom);
                 CurrentRoom = nextRoom;
-                _achievementManager.Notify("RoomChange", this);
+                AchievementManager.Notify("RoomChange", this);
                 EnemyEncounter();
                 NormalMessage("\n" + CurrentRoom.Details());
                 ScanRoom();
@@ -66,13 +66,14 @@ namespace StarterGame.Player
         
         private void EnterRatataxLair(string direction)
         {
-            TeleporterDecorator teleporterDecorator = CurrentRoom.Interactables[direction] as TeleporterDecorator;
+            CurrentRoom.Interactables.TryGetValue(direction, out Interactable interactable);
+            TeleporterDecorator teleporterDecorator = interactable as TeleporterDecorator;
             if (teleporterDecorator != null)
             {
                 if (Currency >= 10)
                 {
                     teleporterDecorator.EnterBossRoom(this);
-                    _achievementManager.Notify("EnteredBossLair", this);
+                    AchievementManager.Notify("EnteredBossLair", this);
                     EnemyEncounter();
                 }
                 else
@@ -80,18 +81,27 @@ namespace StarterGame.Player
                     ErrorMessage("You approach the door, but the group of mice guarding it stop you. They say if you're not here to pay the tax, you're not welcome.");
                 }
             }
+            else
+            {
+                ErrorMessage("I don't see a " + direction + " here.");
+            }
         }
 
         private void UseTeleporter(string direction)
         {
-            TeleporterDecorator teleporterDecorator = CurrentRoom.Interactables[direction] as TeleporterDecorator;
+            CurrentRoom.Interactables.TryGetValue(direction, out Interactable interactable);
+            TeleporterDecorator teleporterDecorator = interactable as TeleporterDecorator;
             if (teleporterDecorator != null)
             {
                 teleporterDecorator.Interact(this);
                 _playerHistory.RoomHistory = new Stack<Room>();
                 _playerHistory.SaveState(CreateState());
-                _achievementManager.Notify("UsedTeleporter", this);
+                AchievementManager.Notify("UsedTeleporter", this);
                 EnemyEncounter();
+            }
+            else
+            {
+                ErrorMessage("I don't see a " + direction + " here.");
             }
         }
 
@@ -116,8 +126,14 @@ namespace StarterGame.Player
             if (CurrentRoom.Interactables.TryGetValue(obj, out Interactable interactable))
             {
                 NormalMessage(interactable.Description);
-                HandleCheeseInteraction(interactable);
-                RemoveInteractable(obj, interactable);
+                if (interactable.CheeseAmount > 0)
+                { 
+                    HandleCheeseInteraction(interactable);
+                }
+                else
+                {
+                    RemoveInteractable(interactable);
+                }
                 ScanRoom();
             }
             else
@@ -129,28 +145,26 @@ namespace StarterGame.Player
 
         private void HandleCheeseInteraction(Interactable interactable)
         {
-            if (Currency <= MaxCurrency)
-            {
-                if (interactable.CheeseAmount > 0)
-                {
-                    AchieveMessage($"You found {interactable.CheeseAmount} cheese!");
-                    Currency += interactable.CheeseAmount;
-                    interactable.CheeseAmount = 0;
-                    _achievementManager.Notify("CheeseFound", this);
-                    InfoMessage($"You now have {Currency} cheese.");
-                }
+            if (Currency >= MaxCurrency)
+            { 
+                ErrorMessage("This cheese is getting heavy, I have enough cheese to pay the tax. I should go back to Mousetopia.");
             }
             else
             {
-                ErrorMessage("I have enough to pay the toll.");
+                AchieveMessage($"You found {interactable.CheeseAmount} cheese!");
+                Currency += interactable.CheeseAmount;
+                interactable.CheeseAmount = 0;
+                AchievementManager.Notify("CheeseFound", this);
+                InfoMessage($"You now have {Currency} cheese.");
+                RemoveInteractable(interactable);
             }
         }
 
-        private void RemoveInteractable(string obj, Interactable interactable)
+        private void RemoveInteractable(Interactable interactable)
         {
             if (!(interactable is TeleporterDecorator) && interactable.CheeseAmount == 0)
             {
-                CurrentRoom.Interactables.Remove(obj);
+                CurrentRoom.Interactables.Remove(interactable.Name);
             }
         }
 
@@ -173,20 +187,14 @@ namespace StarterGame.Player
             Enemy enemy = CurrentRoom.Enemy;
             if (enemy != null)
             {
-                IsInCombat = true;
                 if (enemy is Ratatax)
                 {
-                    _achievementManager.Notify("BossEncounter", this);
-                    BattleMessage($">>>You walk towards {enemy.Name}, all the mice in the room are watching you.");
-                    BattleMessage("RATATAX: Here to pay my CHEESE TAX?");
-                    HandleEnemyInteraction();
+                    AchievementManager.Notify("BossEncounter", this);
                 }
-                else
-                {
-                    _achievementManager.Notify("EnemyEncounter", this);
-                    WarningMessage($"An {enemy.Name} is coming towards you. What will you do?");
-                    HandleEnemyInteraction();
-                }
+                IsInCombat = true;
+                AchievementManager.Notify("EnemyEncounter", this);
+                enemy.OnEncounter(this);
+                HandleEnemyInteraction();
             }
         }
 
@@ -211,27 +219,7 @@ namespace StarterGame.Player
         public void Bite()
         {
             Enemy enemy = CurrentRoom.Enemy;
-            BattleMessage(">>>You've chosen to bite " + CurrentRoom.Enemy.Name);
-            if (enemy.IsFriendly)
-            {
-                BattleMessage(enemy.Name + " looks at you with disappointment and walks away.");
-                CurrentRoom.Enemy = null;
-            }
-            else
-            {
-                if (enemy.ScaredChance < 5)
-                {
-                    _achievementManager.Notify("EnemyDefeated", this);
-                    BattleMessage(enemy.Name + " has ran away...");
-                    CurrentRoom.Enemy = null;
-                }
-                else
-                {
-                    enemy.DoAttack(this);
-                    Die();
-                }
-            }
-            IsInCombat = false;
+            enemy.OnBite(this);
         }
 
         public void Flee()
@@ -258,41 +246,8 @@ namespace StarterGame.Player
             }
             else
             {
-                if (enemy is Ratatax)
-                {
-                    int annoyedRatatax = 0;
-                    if (annoyedRatatax == 3)
-                    {
-                        BattleMessage("RATATAX: You've annoyed me mouse. Now you'll have to pay with your life.");
-                        EvenWorseEnd();
-                    }
-                    if (amountToGive < 10)
-                    {
-                        BattleMessage("RATATAX: That's not enough! You know my cheese tax is 10 cheese! Pay up!");
-                        annoyedRatatax++;
-                    }
-                    else
-                    {
-                        Currency -= amountToGive;
-                        _achievementManager.Notify("PaidCheeseTax", this);
-                        BattleMessage(">>>You gave " + amountToGive + " cheese to Ratatax.");
-                        NormalMessage(">>>You paid the cheese tax.... You've avoid the Mouse Mafia for now...but what will happen next time?");
-                        IsInCombat = false;
-                        BadEnd();
-                    }
-                } 
-                else if (enemy is Dog)
-                {
-                    Currency -= amountToGive;
-                    _achievementManager.Notify("FedDog", this);
-                    NormalMessage(">>>You gave the dog some cheese. He wags his tail happily. You made a friend.");
-                    AchieveMessage("You've unlocked the 'whistle' command! Use it when you REALLY need help. You may only use it ONCE. Choose wisely.");
-                    IsInCombat = false;
-                }
-                else
-                {
-                    NormalMessage("I don't think I should give that to them.");
-                }
+                Currency -= amountToGive;
+                enemy.OnGive(this, amountToGive);
             }
         }
         
@@ -308,18 +263,8 @@ namespace StarterGame.Player
                 }
                 else
                 {
-                    if (enemy is Ratatax)
-                    {
-                        HandleRatataxExchange(amountToGive);
-                    } 
-                    else if (enemy is Dog)
-                    {
-                        HandleDogEncounter(amountToGive);
-                    }
-                    else
-                    {
-                        NormalMessage("I don't think I should give that to them.");
-                    }
+                    Currency -= amountToGive;
+                    enemy.OnGive(this, amountToGive);
                 } 
             }
             else 
@@ -328,48 +273,6 @@ namespace StarterGame.Player
             }
         }
 
-        private void HandleRatataxExchange(int amountToGive)
-        {
-            int annoyedRatatax = 0;
-            if (annoyedRatatax == 3)
-            {
-                BattleMessage("RATATAX: You've annoyed me mouse. Now you'll have to pay with your life.");
-                EvenWorseEnd();
-            }
-            if (amountToGive < 10)
-            {
-                BattleMessage("RATATAX: That's not enough! You know my cheese tax is 10 cheese! Pay up!");
-                annoyedRatatax++;
-            }
-            else
-            {
-                Currency -= amountToGive;
-                _achievementManager.Notify("PaidCheeseTax", this);
-                BattleMessage(">>>You gave " + amountToGive + " cheese to Ratatax.");
-                NormalMessage(">>>You paid the cheese tax.... You've avoid the Mouse Mafia for now...but what will happen next time?");
-                IsInCombat = false;
-                BadEnd();
-            }
-        }
-
-        private void HandleDogEncounter(int amountToGive)
-        {
-            int amountWanted = 5;
-            int amountGiven = 0;
-            amountGiven += amountToGive;
-            Currency -= amountToGive;
-            if (amountGiven >= amountWanted)
-            {
-                _achievementManager.Notify("FedDog", this);
-                NormalMessage(">>>You gave the dog some cheese. He wags his tail happily. You made a friend.");
-                IsInCombat = false;
-            }
-            else
-            {
-                BattleMessage(">>>You gave the dog " + amountToGive + " cheese. He looks at you with disappointment. He wants more cheese.");
-            }
-        }
-        
         public void Whistle()
         {
             NormalMessage(">>>You whistle loudly.");
@@ -395,9 +298,15 @@ namespace StarterGame.Player
             }
         }
         
-        private void BadEnd()
+        public void BadEnd()
         {
             NormalMessage("You rest easy knowing that your cheese tax with the Mouse Mafia has been paid. However, what will you do next time? If only someone would have put a stop to the Mouse Mafia once and for all...");
+            Lives = 0;
+        }
+
+        public void EvenWorseEnd()
+        {
+            NormalMessage("You've annoyed Ratatax one too many times. He's had enough of your shenanigans. He kills you and takes all of your cheese. You are dead.");
             Lives = 0;
         }
         
@@ -407,19 +316,14 @@ namespace StarterGame.Player
             Lives = 0;
         }
 
-        private void EvenWorseEnd()
-        {
-            NormalMessage("You've annoyed Ratatax one too many times. He's had enough of your shenanigans. He kills you and takes all of your cheese. You are dead.");
-            Lives = 0;
-        }
-
         public void Die()
         {
             Lives--;
-            _achievementManager.Notify("PlayerDeath", this);
+            AchievementManager.Notify("PlayerDeath", this);
             PlayerState playerState = _playerHistory.PeekState();
             if (Lives > 0)
             {
+                IsInCombat = false;
                 if (_playerHistory.Count > 1)
                 {
                     playerState = _playerHistory.RestoreState();
@@ -433,7 +337,7 @@ namespace StarterGame.Player
             else
             {
                 ErrorMessage("\nYou have died. You have no lives left. Game Over.");
-                _achievementManager.Notify("DeadDead", this);
+                AchievementManager.Notify("DeadDead", this);
             }
         }
 

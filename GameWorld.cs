@@ -152,7 +152,7 @@ namespace StarterGame
         
         private Room CreateBackAlley()
         {
-            Interactable dumpster = new CheeseDecorator(new SimpleInteractable("dumpster", "You approach the dumpster. It smells like cheese..."), 80);
+            Interactable dumpster = new CheeseDecorator(new SimpleInteractable("dumpster", "You approach the dumpster. It smells like cheese..."), 90);
             Room backAlley = new RoomBuilder()
                 .SetName("Back Alley")
                 .SetTag("in the Back Alley. There are a few dumpsters and abandoned buildings on the sides.")
@@ -173,13 +173,12 @@ namespace StarterGame
         private Room CreateCheeseSquare()
         {
             Interactable group = new SimpleInteractable("group", "You approach a group of mice. You hear them talking about how they wish someone would put a stop to the Mouse Mafia...");
-            Interactable fountain = new CheeseDecorator(new SimpleInteractable("fountain", "You approach the fountain. The fountain is made of stone and is shaped like a mouse. Mice are drinking from the fountain."), 15);
+            Interactable fountain = new CheeseDecorator(new SimpleInteractable("fountain", "You approach the fountain. The fountain is made of stone and is shaped like a mouse. Mice are drinking from the fountain."), 30);
             Room cheeseSquare = new RoomBuilder()
                 .SetName("Cheese Square")
                 .SetTag("in the Cheese Square. The heart of Mousetopia. There is a fountain in the middle of the square. Mice are interacting with each other and there are a few shops on the sides.")
                 .AddInteractable(group)
                 .AddInteractable(fountain)
-                .AddEnemy(new Dog())
                 .Build();
             return cheeseSquare;
         }
@@ -189,7 +188,6 @@ namespace StarterGame
             Room sewer = new RoomBuilder()
                 .SetName("Sewer")
                 .SetTag("in the Sewer. There are pipes everywhere.")
-                .AddEnemy(new Cat())
                 .Build();
             return sewer;
         }
@@ -206,8 +204,10 @@ namespace StarterGame
         private Room CreateOrangeBathroom()
         {
             Room orangeBathroom = new RoomBuilder()
-                .SetName("Pipe 1")
+                .SetName("Orange Bathroom")
                 .SetTag("in an Orange Bathroom. It is a small, dirty bathroom.")
+                .SetIsCheckPoint(true)
+                .AddInteractable(new CheeseDecorator(new SimpleInteractable("toothbrush", "You approach an old toothbrush on the ground."), 90))
                 .Build();
             return orangeBathroom;
         }
@@ -217,6 +217,7 @@ namespace StarterGame
             Room orangeKitchen = new RoomBuilder()
                 .SetName("Orange Kitchen")
                 .SetTag("in an Orange Kitchen.")
+                .AddInteractable(new CheeseDecorator(new SimpleInteractable("fridge", "You approach the fridge. It smells nice."), 100))
                 .Build();
             return orangeKitchen;
         }
@@ -224,8 +225,9 @@ namespace StarterGame
         private Room CreateBlueBathroom()
         {
             Room blueBathroom = new RoomBuilder()
-                .SetName("Pipe 2")
+                .SetName("Blue Bathroom")
                 .SetTag("in a Blue Bathroom. It is a medium sized bathroom.")
+                .SetIsCheckPoint(true)
                 .Build();
             return blueBathroom;
         }
@@ -235,6 +237,9 @@ namespace StarterGame
             Room blueLivingRoom = new RoomBuilder()
                 .SetName("Blue Living Room")
                 .SetTag("in a Blue Living Room.")
+                .AddInteractable(new CheeseDecorator(new SimpleInteractable("sock", "You approach the sock. It has a familiar smell.."), 100))
+                .AddInteractable(new CheeseDecorator(new SimpleInteractable("rug", "You approach the rug. It looks soft."), 75))
+                .AddEnemy(new Cat(4))
                 .Build();
             return blueLivingRoom;
         }
@@ -256,6 +261,7 @@ namespace StarterGame
             Room blueDiningRoom = new RoomBuilder()
                 .SetName("Blue Dining Room")
                 .SetTag("in a Blue Dining Room.")
+                .AddEnemy(new Giant())
                 .Build();
             return blueDiningRoom;
         }
@@ -263,7 +269,7 @@ namespace StarterGame
         private Room CreateGreenBathroom()
         {
             Room greenBathroom = new RoomBuilder()
-                .SetName("Pipe 3")
+                .SetName("Green Bathroom")
                 .SetTag("in a Green Bathroom. It is a large bathroom.")
                 .Build();
             return greenBathroom;
@@ -298,6 +304,7 @@ namespace StarterGame
             Room hallway = new RoomBuilder()
                 .SetName("Hallway")
                 .SetTag("in a narrow Hallway.")
+                .AddInteractable(new CheeseDecorator(new SimpleInteractable("shoes", "You approach the shoe. They have a familiar smell."), 80))
                 .Build();
             return hallway;
         }
@@ -309,6 +316,7 @@ namespace StarterGame
                 .SetName("Game Room")
                 .SetTag("in a large Game Room.")
                 .AddInteractable(bowl)
+                .AddEnemy(new Dog())
                 .Build();
             return gameRoom;
         }
@@ -316,7 +324,7 @@ namespace StarterGame
         private Room CreateRedBathroom()
         {
             Room redBathroom = new RoomBuilder()
-                .SetName("Pipe 4")
+                .SetName("Red Bathroom")
                 .SetTag("in a Red Bathroom. It is a small bathroom.")
                 .SetIsCheckPoint(true)
                 .Build();
@@ -325,22 +333,23 @@ namespace StarterGame
         
         private Room CreateRedKitchen()
         {
-           // Interactable fridge = Interactable.CreateCheeseInteractable("fridge", "You approach the fridge. It appears to be cracked. You search through the fridge.", 100);
+            Interactable fridge = new CheeseDecorator(new SimpleInteractable("fridge", "You approach the fridge. It is a large fridge. You search through the fridge."), 100);
             Room redKitchen = new RoomBuilder()
                 .SetName("Red Kitchen")
                 .SetTag("in a Red Kitchen.")
-             //   .AddInteractable(fridge)
+                .AddInteractable(fridge)
                 .Build();
             return redKitchen;
         }
         
         private Room CreateRedLivingRoom()
         {
-         //   Interactable couch = Interactable.CreateCheeseInteractable("couch", "You approach the couch. It is a large, red couch. You search under the couch.", 50);
+            Interactable couch = new CheeseDecorator(new SimpleInteractable("couch", "You approach the couch. It is a large couch. You search under the couch."), 50);
             Room redLivingRoom = new RoomBuilder()
                 .SetName("Red Living Room")
                 .SetTag("in a Red Living Room.")
-             //   .AddInteractable(couch)
+                .AddInteractable(couch)
+                .AddEnemy(new Cat())
                 .Build();
             return redLivingRoom;
         }
