@@ -5,7 +5,7 @@ namespace StarterGame.Rooms
 {
     public class RoomBuilder
     {
-        private Room _room;
+        private readonly Room _room;
 
         public RoomBuilder()
         {

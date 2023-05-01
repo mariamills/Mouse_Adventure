@@ -2,7 +2,7 @@
 
 namespace StarterGame.Enemies
 {
-    public class EnemyFactory
+    public abstract class EnemyFactory
     {
         public static readonly Random Random = new Random();
         public static Enemy CreateEnemy(string enemyType)

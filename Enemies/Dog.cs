@@ -2,7 +2,7 @@
 {
     public class Dog : Enemy
     {
-        private int _cheeseWanted = 5;
+        private readonly int _cheeseWanted = 5;
         private int _cheeseGiven = 0;
 
         public Dog() : base("Dog", Enemy.RandomNumber(0, 10), true)

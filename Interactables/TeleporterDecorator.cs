@@ -7,7 +7,7 @@ namespace StarterGame.Interactables
     public class TeleporterDecorator : Interactable
     {
         private readonly List<Room> _possibleDestinations;
-        private Random _random;
+        private readonly Random _random;
         public TeleporterDecorator(Interactable interactable, List<Room> possibleDestinations) : base(interactable.Name, interactable.Description)
         {
             _possibleDestinations = possibleDestinations;

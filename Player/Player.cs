@@ -331,8 +331,6 @@ namespace StarterGame.Player
                 LoadCheckpoint(playerState);
                 ErrorMessage("\nYou have died. You have " + Lives + " lives left.");
                 InfoMessage("You've returned to your last checkpoint: " + CurrentRoom.Name);
-            //    InfoMessage(CurrentRoom.Details());
-            //    ScanRoom();
             }
             else
             {
