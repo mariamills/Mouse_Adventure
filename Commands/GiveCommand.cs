@@ -9,12 +9,12 @@
 
         public override bool Execute(Player.Player player)
         {
-            if (HasSecondWord())
-            {
-                player.Give(SecondWord);
-            } else if (HasThirdWord())
+            if (HasThirdWord())
             {
                 player.Give(SecondWord, ThirdWord);
+            } else if (HasSecondWord())
+            {
+                player.Give(SecondWord);
             }
             else
             {

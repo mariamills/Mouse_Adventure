@@ -19,6 +19,7 @@
 >>>Not every room has cheese, you don't have to search every room.
 >>>There could be secret tunnels somewhere... why not give them a 'go' by using the 'go [object]' command?
 >>>Paying the Cheese Tax can't be the only way to win the game, right...?
+>>>Maybe you can find a furry friend to help you out...
             
             ");
             return false;

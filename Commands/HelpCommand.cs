@@ -35,6 +35,7 @@ Your available commands are:
   - hint: Display game hints.
   - go [direction]: Move in the specified direction (north, south, east, west).
   - whereami: Display the name of the current room.
+  - back: Return to the previous room. Cannot be used after go through secret passages.
   - look [obj]: Search an object in the room for cheese.
   - cheese: Display the amount of cheese you currently have.
   - die: Lose a life and return to the last checkpoint. This was added for testing purposes but will remain in the game just for fun.

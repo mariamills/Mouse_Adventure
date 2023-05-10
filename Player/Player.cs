@@ -145,9 +145,10 @@ namespace StarterGame.Player
 
         private void HandleCheeseInteraction(Interactable interactable)
         {
-            if (Currency >= MaxCurrency)
+            if (interactable.CheeseAmount + Currency > MaxCurrency)
             { 
-                ErrorMessage("This cheese is getting heavy, I have enough cheese to pay the tax. I should go back to Mousetopia.");
+                ErrorMessage($"I have {Currency} cheese. The {interactable.Name} has {interactable.CheeseAmount}...I can't carry more than {MaxCurrency} cheese at a time.");
+                ErrorMessage("This cheese is getting heavy, I have enough cheese to pay the tax. Maybe I should go back to Mousetopia.");
             }
             else
             {
@@ -239,25 +240,14 @@ namespace StarterGame.Player
         public void Give(string amount)
         {
             Enemy enemy = CurrentRoom.Enemy;
-            int amountToGive = Convert.ToInt32(amount);
-            if(amountToGive > Currency)
+            int amountToGive = TryConvertToInt(amount);
+            if (amountToGive == -1)
             {
-                ErrorMessage("I don't have that much cheese.");
+                ErrorMessage("Invalid amount. Please enter a number. Example: 'give 5' or 'give 5 cheese'");
             }
             else
             {
-                Currency -= amountToGive;
-                enemy.OnGive(this, amountToGive);
-            }
-        }
-        
-        public void Give(string amount, string itemName)
-        {
-            Enemy enemy = CurrentRoom.Enemy;
-            int amountToGive = Convert.ToInt32(amount);
-            if (itemName == "cheese")
-            {
-                if(amountToGive > Currency)
+                if (amountToGive > Currency)
                 {
                     ErrorMessage("I don't have that much cheese.");
                 }
@@ -265,13 +255,53 @@ namespace StarterGame.Player
                 {
                     Currency -= amountToGive;
                     enemy.OnGive(this, amountToGive);
-                } 
-            }
-            else 
-            {
-                ErrorMessage("I can't give that.");
+                }
             }
         }
+        
+        public void Give(string amount, string itemName)
+        {
+            Enemy enemy = CurrentRoom.Enemy;
+            int amountToGive = TryConvertToInt(amount);
+            if (amountToGive == -1)
+            {
+                ErrorMessage("Invalid amount. Please enter a number. Example: 'give 5' or 'give 5 cheese'");
+            }
+            else
+            {
+                if (itemName == "cheese")
+                {
+                    if(amountToGive > Currency)
+                    {
+                        ErrorMessage("I don't have that much cheese.");
+                    }
+                    else
+                    {
+                        Currency -= amountToGive;
+                        enemy.OnGive(this, amountToGive);
+                    } 
+                }
+                else 
+                {
+                    ErrorMessage("I can't give that.");
+                }
+            }
+        }
+
+        private int TryConvertToInt(string amount)
+        {
+            int amountToGive;
+            try
+            {
+                amountToGive = Convert.ToInt32(amount);
+            }
+            catch (FormatException)
+            {
+                amountToGive = -1;
+            }
+            return amountToGive;
+        }
+ 
 
         public void Whistle()
         {
@@ -293,6 +323,7 @@ namespace StarterGame.Player
                 else
                 {
                     BattleMessage("Your furry friend comes to aid you! He attacks the " + enemy.Name + " and leaves nothing but a pile of fur. He then runs away.");
+                    AchievementManager.Notify("EnemyDefeated", this);
                     IsInCombat = false;
                 }
             }
@@ -327,7 +358,7 @@ namespace StarterGame.Player
                 if (_playerHistory.Count > 1)
                 {
                     playerState = _playerHistory.RestoreState();
-                } 
+                }
                 LoadCheckpoint(playerState);
                 ErrorMessage("\nYou have died. You have " + Lives + " lives left.");
                 InfoMessage("You've returned to your last checkpoint: " + CurrentRoom.Name);

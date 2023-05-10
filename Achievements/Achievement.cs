@@ -22,7 +22,7 @@ namespace StarterGame.Achievements
                 Unlocked = true;
                 player.AchieveMessage("🎖️Achievement Unlocked: [" + Name + "] - " + Description);
                 player.AchieveMessage("🎖️You have been awarded 1 cheese.");
-                player.Currency += 1;
+                player.Currency++;
             }
         }
         
