@@ -4,11 +4,11 @@ using StarterGame.Rooms;
 
 namespace StarterGame.Interactables
 {
-    public class TeleporterDecorator : Interactable
+    public class TeleporterDecorator : InteractableDecorator
     {
         private readonly List<Room> _possibleDestinations;
         private readonly Random _random;
-        public TeleporterDecorator(Interactable interactable, List<Room> possibleDestinations) : base(interactable.Name, interactable.Description)
+        public TeleporterDecorator(Interactable interactable, List<Room> possibleDestinations) : base(interactable, interactable.Name, interactable.Description)
         {
             _possibleDestinations = possibleDestinations;
             _random = new Random();
